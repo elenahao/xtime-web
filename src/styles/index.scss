@@ -1,0 +1,16 @@
+// 主题变量
+$primary-color: #40556A;
+$link-color : #40556A;
+$link-hover-color : tint($link-color, 20%);
+$link-active-color : shade($link-color, 5%);
+
+// 去除默认样式
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+a{
+    text-decoration: none;
+    color: #fff;
+}

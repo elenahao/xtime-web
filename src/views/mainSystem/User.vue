@@ -1,10 +1,10 @@
 <template>
     <div>
-        <h1>system22</h1>
+        <h1>用户管理</h1>
     </div>
 </template>
 <script>
 export default {
-    name: "system22"
+    name: "user"
 }
 </script>

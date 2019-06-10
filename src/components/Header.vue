@@ -21,7 +21,7 @@ export default {
 .header {
     height: 60px;
     padding: 0 30px;
-    background-color: $primary-color;
+    background-color: #545c64;
     display: flex;
     flex-direction: center;
     align-items: center;

@@ -1,10 +1,10 @@
 <template>
     <div>
-        <h1>system12</h1>
+        <h1>排期管理</h1>
     </div>
 </template>
 <script>
 export default {
-    name: "system12"
+    name: "showtime"
 }
 </script>

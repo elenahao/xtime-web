@@ -9,5 +9,8 @@ module.exports = {
                 data: `@import "~@/styles/index.scss";`
             }
         }
+    },
+    devServer: {
+        port: 9000
     }
 }

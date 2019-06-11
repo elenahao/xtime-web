@@ -5,7 +5,7 @@
         </el-header>
         <el-container>
             <el-aside width="200px">
-                <Nav />
+                <SideMenu />
             </el-aside>
             <el-main>
                 <router-view class="view" ref=""></router-view>
@@ -16,13 +16,13 @@
 
 <script>
 import Header from './Header.vue'
-import Nav from './Nav.vue'
+import SideMenu from './SideMenu.vue'
 
 export default {
     name: 'Home',
     components: {
         Header,
-        Nav
+        SideMenu
     }
 }
 </script>

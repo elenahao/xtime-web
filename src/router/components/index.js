@@ -1,6 +1,6 @@
 import Home from "@/views/Home.vue"
-import System11 from "@/views/system11.vue"
-import System12 from "@/views/system12.vue"
+import Menu1 from "@/views/menu1.vue"
+import Menu2 from "@/views/menu2.vue"
 import System13 from "@/views/system13.vue"
 import System21 from "@/views/system21.vue"
 import System22 from "@/views/system22.vue"
@@ -11,12 +11,12 @@ export default [
         component: Home
     },
     {
-        path: "/system11",
-        component: System11
+        path: "/system/menu1",
+        component: Menu1
     },
     {
-        path: "/system12",
-        component: System12
+        path: "/system/menu2",
+        component: Menu2
     },
     {
         path: "/system13",

@@ -1,6 +1,7 @@
 import Home from "@/views/Home.vue"
 import User from "@/views/mainSystem/User.vue"
 import Role from "@/views/mainSystem/Role.vue"
+import Authority from "@/views/mainSystem/Authority.vue"
 import System from "@/views/mainSystem/System.vue"
 import Member from "@/views/cmc/Member.vue"
 import Snack from "@/views/cmc/Snack.vue"
@@ -19,6 +20,10 @@ export default [
     {
         path: "/role",
         component: Role
+    },
+    {
+        path: "/authority",
+        component: Authority
     },
     {
         path: "/system",

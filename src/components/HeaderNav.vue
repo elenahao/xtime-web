@@ -10,7 +10,7 @@
         <el-submenu v-for="(item, index) of menuList" :key="index" :index="item.index">
             <template slot="title">{{item.title}}</template>
             <el-menu-item v-for="(cItem, cIndex) of item.children" :key="cIndex" :index="cItem.index">
-                <router-link @click.native="changeSysAndFirst({system: item.title, first: cItem.title})" :to="cItem.router">{{cItem.title}}</router-link>
+                <router-link @click.native="changeMenu(item.title, cItem.title)" :to="cItem.router">{{cItem.title}}</router-link>
             </el-menu-item>
         </el-submenu>
     </el-menu>
@@ -78,7 +78,15 @@ export default {
         };
     },
     methods: {
-        ...mapMutations('global', ['changeSysAndFirst'])
+        ...mapMutations('global', ['changeSysAndFirst']),
+        changeMenu (system, first) {
+            this.changeSysAndFirst({system: system, first: first});
+        }
+    },
+    watch: {
+        $route(){
+            console.log(this.$route.path);
+        }
     }
 };
 </script>

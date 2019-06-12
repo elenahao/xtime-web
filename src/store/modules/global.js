@@ -4,7 +4,8 @@ export default {
         system: '',
         firstLevelMenu: '',
         secondLevelMenu: '',
-        thirdLevelMenu: ''
+        thirdLevelMenu: '',
+        sidebar: ''
     },
     getters: {
         getBreadcrumb: state => {
@@ -21,6 +22,9 @@ export default {
         },
         changeThirdLevelMenu: (state, thirdLevelMenu) => {
             state.thirdLevelMenu = thirdLevelMenu
+        },
+        changeSidebar: (state, sidebar) => {
+            state.sidebar = sidebar
         }
     }
 }

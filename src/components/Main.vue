@@ -34,6 +34,9 @@ export default {
     computed: {
         ...mapState('global', ['system', 'firstLevelMenu', 'secondLevelMenu', 'thirdLevelMenu'])
     },
+    mounted() {
+        console.log(this.$route.path);
+    }
 }
 </script>
 <style lang="scss" scoped>

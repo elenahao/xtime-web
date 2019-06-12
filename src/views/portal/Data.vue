@@ -1,10 +1,10 @@
 <template>
     <div>
-        <h1>数据匹配</h1>
+        <h1>个人信息设置</h1>
     </div>
 </template>
 <script>
 export default {
-    name: "match"
+    name: "data"
 }
 </script>

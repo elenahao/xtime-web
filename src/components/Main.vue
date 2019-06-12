@@ -5,9 +5,10 @@
         </el-header>
         <el-container>
             <el-aside width="200px">
-                <SideMenu />
+                <Nav />
             </el-aside>
             <el-main>
+                <p>{{getBreadCrumb}}</p>
                 <router-view class="view" ref=""></router-view>
             </el-main>
         </el-container>
@@ -16,14 +17,19 @@
 
 <script>
 import Header from './Header.vue'
-import SideMenu from './SideMenu.vue'
+import Nav from './Nav.vue'
+import { mapState, mapGetters } from "vuex"
 
 export default {
     name: 'Home',
     components: {
         Header,
-        SideMenu
-    }
+        Nav
+    },
+    computed: {
+        ...mapState('global', ['system', 'firstLevelMenu']),
+        ...mapGetters('global', ['getBreadCrumb'])
+    },
 }
 </script>
 <style lang="scss" scoped>

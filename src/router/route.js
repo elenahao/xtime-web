@@ -1,21 +1,11 @@
 import Main from '@/components/Main.vue'
-import routerChild from './components/index'
+import routerCont from './components/index'
 export default [{
         path: '/',
         name: 'home',
         component: Main,
-        children: routerChild
+        children: routerCont
     },
-    {
-        path: '/system',
-        name: 'system',
-        component: Main,
-        children: routerChild
-    },
-    {
-        path: '/user',
-        name: 'user',
-    }
     // {
     //   path: '/about',
     //   name: 'about',

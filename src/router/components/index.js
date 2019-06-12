@@ -1,37 +1,52 @@
 import Home from "@/views/Home.vue"
-import Menu1 from "@/views/menu1.vue"
-import Menu2 from "@/views/menu2.vue"
-import System13 from "@/views/system13.vue"
-import System21 from "@/views/system21.vue"
-import System22 from "@/views/system22.vue"
-import System23 from "@/views/system23.vue"
+import User from "@/views/mainSystem/User.vue"
+import Role from "@/views/mainSystem/Role.vue"
+import Authority from "@/views/mainSystem/Authority.vue"
+import System from "@/views/mainSystem/System.vue"
+import Member from "@/views/cmc/Member.vue"
+import Snack from "@/views/cmc/Snack.vue"
+import Match from "@/views/ticket/Match.vue"
+import Movie from "@/views/ticket/Movie.vue"
+import Showtime from "@/views/ticket/Showtime.vue"
 export default [
     {
         path: "/",
         component: Home
     },
     {
-        path: "/system/menu1",
-        component: Menu1
+        path: "/user",
+        component: User
     },
     {
-        path: "/system/menu2",
-        component: Menu2
+        path: "/role",
+        component: Role
     },
     {
-        path: "/system13",
-        component: System13
+        path: "/authority",
+        component: Authority
     },
     {
-        path: "/system21",
-        component: System21
+        path: "/system",
+        component: System
     },
     {
-        path: "/system22",
-        component: System22
+        path: "/member",
+        component: Member
     },
     {
-        path: "/system23",
-        component: System23
+        path: "/snack",
+        component: Snack
+    },
+    {
+        path: "/match",
+        component: Match
+    },
+    {
+        path: "/movie",
+        component: Movie
+    },
+    {
+        path: "/showtime",
+        component: Showtime
     }
 ]

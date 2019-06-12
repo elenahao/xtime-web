@@ -3,30 +3,17 @@
         <router-link class="header-icon"
                      to="/">
         </router-link>
-        <div @click="addUserId()">click </div>
-        <div @click="addAction()">click2 </div>
-        <div>{{userId}}</div>
-        <div>{{userName}}</div>
         <div class="header-nav">
             <HeaderNav />
         </div>
     </div>
 </template>
 <script>
-import HeaderNav from './HeaderNav'
-import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import HeaderNav from "./HeaderNav"
 export default {
     name: 'Header',
     components: {
         HeaderNav
-    },
-    methods: {
-        ...mapMutations('user', ['addUserId']),
-        ...mapActions('user', ['addAction']),
-    },
-    computed: {
-        ...mapState('user', ['userId', 'userName']),
-        ...mapGetters('user', ['moreUserId'])
     }
 }
 </script>
@@ -34,7 +21,7 @@ export default {
 .header {
     height: 60px;
     padding: 0 30px;
-    background-color: $primary-color;
+    background-color: #545c64;
     display: flex;
     flex-direction: center;
     align-items: center;
@@ -44,7 +31,7 @@ export default {
         width: 136px;
         height: 42px;
     }
-    .header-nav {
+    .header-nav{
         margin-left: 100px;
     }
 }

@@ -5,26 +5,28 @@ export default {
         firstLevelMenu: '',
         secondLevelMenu: '',
         thirdLevelMenu: '',
-        sidebar: ''
+        systemCode: '',
+        firstMenuCode: '',
+        secondMenuCode: '',
+        thirdMenuCode: ''
     },
     getters: {
-        getBreadcrumb: state => {
-            return `${state.system} > ${state.firstLevelMenu} > ${state.secondLevelMenu} > ${state.thirdLevelMenu}`
+        getSysAndFirst: state => {
+            return `${state.systemCode}>${state.firstMenuCode}`
         }
     },
     mutations: {
         changeSysAndFirst: (state, payload) => {
             state.system = payload.system
             state.firstLevelMenu = payload.first
+            state.systemCode = payload.systemCode
+            state.firstMenuCode = payload.firstMenuCode
         },
         changeSecondLevelMenu: (state, secondLevelMenu) => {
             state.secondLevelMenu = secondLevelMenu
         },
         changeThirdLevelMenu: (state, thirdLevelMenu) => {
             state.thirdLevelMenu = thirdLevelMenu
-        },
-        changeSidebar: (state, sidebar) => {
-            state.sidebar = sidebar
         }
     }
 }

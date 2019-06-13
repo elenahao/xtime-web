@@ -5,12 +5,22 @@ export default {
         firstLevelMenu: '',
         secondLevelMenu: '',
         thirdLevelMenu: '',
+        systemCode: '',
+        firstMenuCode: '',
+        secondMenuCode: '',
+        thirdMenuCode: ''
     },
-    getters: {},
+    getters: {
+        getSysAndFirst: state => {
+            return `${state.systemCode}>${state.firstMenuCode}`
+        }
+    },
     mutations: {
         changeSysAndFirst: (state, payload) => {
             state.system = payload.system
             state.firstLevelMenu = payload.first
+            state.systemCode = payload.systemCode
+            state.firstMenuCode = payload.firstMenuCode
         },
         changeSecondLevelMenu: (state, secondLevelMenu) => {
             state.secondLevelMenu = secondLevelMenu

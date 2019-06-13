@@ -40,7 +40,7 @@ export default [
         component: Password
     },
     {
-        path: "/portal/personInfo/data/reset",
+        path: "/portal/personInfo/data/list",
         component: Data
     },
     {

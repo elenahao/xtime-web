@@ -5,14 +5,6 @@
 </template>
 <script>
 export default {
-    name: "Home",
-    methods: {
-        getUrl () {
-            return this.$route.path
-        }
-    },
-    mounted() {
-        console.log(this.$route.path);
-    }
+    name: "Home"
 }
 </script>

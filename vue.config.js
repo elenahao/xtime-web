@@ -14,7 +14,12 @@ module.exports = {
         port: 9000,
         proxy: {
             '/api': {
-                target: 'http://127.0.0.1:8083/menu',
+                target: 'http://192.168.111.193:8083/menu',
+                pathRewrite: {
+                    '^/api': ''
+                },
+                ws: true,
+                changeOrigin: true,
                 secure: false
             }
         }

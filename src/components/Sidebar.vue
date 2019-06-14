@@ -7,15 +7,31 @@
                  background-color="#545c64"
                  text-color="#fff"
                  active-text-color="#ffd04b">
-            <el-submenu v-for="(item, index) of sidebarList" :key="index" :index="item.index">
-                <template slot="title">
-                    <i class="el-icon-menu"></i>
-                    <span>{{item.title}}</span>
-                </template>
-                <el-menu-item v-for="(cItem, index) of item.children" :key="index" :index="cItem.index">
-                    <router-link :to="cItem.router">{{cItem.title}}</router-link>
+            <template v-for="(item, index) of sidebarList">
+                <!-- 单层 -->
+                <el-menu-item v-if="item.children.length === 0"
+                              :key="index+1">
+                    <template slot="title">
+                        <span>
+                            <router-link :to="'/'+item.router">{{item.title}}</router-link>
+                        </span>
+                    </template>
                 </el-menu-item>
-            </el-submenu>
+                <!-- 多层 -->
+                <el-submenu v-else
+                            v-for="(cItem, cIndex) in item.children"
+                            :index="String(index+1)"
+                            :key="cIndex">
+                    <template slot="title">
+                        <i class="el-icon-s-fold"></i>
+                        <span>{{item.title}}</span>
+                    </template>
+                    <el-menu-item :key="cIndex+1"
+                                  index="1-1">
+                        <router-link :to="'/'+cItem.router">{{cItem.title}}</router-link>
+                    </el-menu-item>
+                </el-submenu>
+            </template>
         </el-menu>
     </div>
 </template>
@@ -24,62 +40,9 @@ import { mapState, mapGetters } from 'vuex'
 import axios from 'axios'
 export default {
     name: 'Nav',
-    data () {
+    data() {
         return {
-            sidebarList: [
-                {
-                    title: "系统管理",
-                    index: "1-1-1",
-                    code: "system",
-                    children: [
-                        {
-                            title: "系统列表",
-                            index: "1-1-1-1",
-                            code: "list",
-                            router: "/portal/baseInfo/system/list"
-                        }
-                    ]
-                },
-                {
-                    title: "角色管理",
-                    index: "1-1-2",
-                    code: "role",
-                    children: [
-                        {
-                            title: "角色列表",
-                            index: "1-1-2-1",
-                            code: "list",
-                            router: "/portal/baseInfo/role/list"
-                        }
-                    ]
-                },
-                {
-                    title: "菜单管理",
-                    index: "1-1-3",
-                    code: "menu",
-                    children: [
-                        {
-                            title: "菜单列表",
-                            index: "1-1-3-1",
-                            code: "list",
-                            router: "/portal/baseInfo/menu/list"
-                        }
-                    ]
-                },
-                {
-                    title: "用户管理",
-                    index: "1-1-4",
-                    code: "user",
-                    children: [
-                        {
-                            title: "用户列表",
-                            index: "1-1-4-1",
-                            code: "list",
-                            router: "/portal/baseInfo/user/list"
-                        }
-                    ]
-                }
-            ]
+            sidebarList: []
         }
     },
     computed: {
@@ -92,54 +55,21 @@ export default {
         },
         handleClose(key, keyPath) {
             console.log(key, keyPath)
-        },
-        handleGetSidebar (val) {
-            this.sidebarList = val;
         }
     },
     watch: {
-        getSysAndFirst: function (val) {
-            console.log(val);
+        getSysAndFirst: function(val) {
+            console.log(val)
             //调用接口获取url对应的左侧菜单栏数据
-            axios.get('/api/getSidebar?code='+val)
-                .then(this.handleGetSidebar)
-            // if('portal>personInfo' == val){
-            //     this.sidebarList = [
-            //         {
-            //             title: "修改密码",
-            //             index: "1-2-1",
-            //             code: "password",
-            //             children: [
-            //                 {
-            //                     title: "重置密码",
-            //                     index: "1-2-1-1",
-            //                     code: "reset",
-            //                     router: "/portal/personInfo/password/reset"
-            //                 }
-            //             ]
-            //         },
-            //         {
-            //             title: "个人信息",
-            //             index: "1-2-2",
-            //             code: "data",
-            //             children: [
-            //                 {
-            //                     title: "信息列表",
-            //                     index: "1-2-2-1",
-            //                     code: "list",
-            //                     router: "/portal/personInfo/data/list"
-            //                 }
-            //             ]
-            //         }
-            //     ];
-            // }
-
+            axios.get('/api/getSidebar?code=' + val).then(res => {
+                this.sidebarList = res.data
+            })
         }
     }
 }
 </script>
 <style lang="scss" scoped>
-.el-menu{
+.el-menu {
     border-right: 0;
 }
 </style>

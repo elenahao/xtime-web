@@ -1,6 +1,6 @@
 // 主路由
 import Main from '@/components/Main.vue'
-import BaseInfo from './components/portal/baseinfo'
+import BaseInfo from './components/portal/baseInfo'
 import PersonInfo from './components/portal/personInfo'
 export default [{
         path: '/',

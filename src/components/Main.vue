@@ -48,6 +48,7 @@ export default {
         ...mapMutations('global', ['changeSysAndFirst']),
         changeMenu(system, first) {
             //调后端接口拿到code对应的name
+
             this.changeSysAndFirst({
                 system: '核心系统',
                 first: '会员管理',

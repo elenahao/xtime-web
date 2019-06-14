@@ -12,7 +12,7 @@ export default {
     },
     getters: {
         getSysAndFirst: state => {
-            return `${state.systemCode}>${state.firstMenuCode}`
+            return `${state.systemCode}/${state.firstMenuCode}`
         }
     },
     mutations: {

@@ -21,6 +21,7 @@
 </template>
 <script>
 import { mapState, mapGetters } from 'vuex'
+import axios from 'axios'
 export default {
     name: 'Nav',
     data () {
@@ -91,42 +92,47 @@ export default {
         },
         handleClose(key, keyPath) {
             console.log(key, keyPath)
+        },
+        handleGetSidebar (val) {
+            this.sidebarList = val;
         }
     },
     watch: {
         getSysAndFirst: function (val) {
             console.log(val);
             //调用接口获取url对应的左侧菜单栏数据
-            if('portal>personInfo' == val){
-                this.sidebarList = [
-                    {
-                        title: "修改密码",
-                        index: "1-2-1",
-                        code: "password",
-                        children: [
-                            {
-                                title: "重置密码",
-                                index: "1-2-1-1",
-                                code: "reset",
-                                router: "/portal/personInfo/password/reset"
-                            }
-                        ]
-                    },
-                    {
-                        title: "个人信息",
-                        index: "1-2-2",
-                        code: "data",
-                        children: [
-                            {
-                                title: "信息列表",
-                                index: "1-2-2-1",
-                                code: "list",
-                                router: "/portal/personInfo/data/list"
-                            }
-                        ]
-                    }
-                ];
-            }
+            axios.get('/api/getSidebar?code='+val)
+                .then(this.handleGetSidebar)
+            // if('portal>personInfo' == val){
+            //     this.sidebarList = [
+            //         {
+            //             title: "修改密码",
+            //             index: "1-2-1",
+            //             code: "password",
+            //             children: [
+            //                 {
+            //                     title: "重置密码",
+            //                     index: "1-2-1-1",
+            //                     code: "reset",
+            //                     router: "/portal/personInfo/password/reset"
+            //                 }
+            //             ]
+            //         },
+            //         {
+            //             title: "个人信息",
+            //             index: "1-2-2",
+            //             code: "data",
+            //             children: [
+            //                 {
+            //                     title: "信息列表",
+            //                     index: "1-2-2-1",
+            //                     code: "list",
+            //                     router: "/portal/personInfo/data/list"
+            //                 }
+            //             ]
+            //         }
+            //     ];
+            // }
 
         }
     }

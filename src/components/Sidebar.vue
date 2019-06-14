@@ -91,14 +91,14 @@ export default {
         },
         handleClose(key, keyPath) {
             console.log(key, keyPath)
-        } 
+        }
     },
     watch: {
         getSysAndFirst: function (val) {
             console.log(val);
             //调用接口获取url对应的左侧菜单栏数据
             if('portal>personInfo' == val){
-                this.sidebarList = [  
+                this.sidebarList = [
                     {
                         title: "修改密码",
                         index: "1-2-1",
@@ -133,7 +133,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.nav {
-    background-color: red;
+.el-menu{
+    border-right: 0;
 }
 </style>

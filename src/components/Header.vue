@@ -4,16 +4,16 @@
                      to="/">
         </router-link>
         <div class="header-nav">
-            <HeaderNav />
+            <Menu />
         </div>
     </div>
 </template>
 <script>
-import HeaderNav from "./HeaderNav"
+import Menu from "./Menu"
 export default {
     name: 'Header',
     components: {
-        HeaderNav
+        Menu
     }
 }
 </script>

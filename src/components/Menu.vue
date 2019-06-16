@@ -1,94 +1,89 @@
 <template>
-    <el-menu
-        class="el-menu-demo"
-        mode="horizontal"
-        background-color="#545c64"
-        text-color="#fff"
-        active-text-color="#ffd04b"
-    >
-        <!-- <el-menu-item index="1"><router-link to="/system1">系统一</router-link></el-menu-item> -->
-        <el-submenu v-for="(item, index) of menuList" :key="index" :index="item.index" :code="item.code">
+    <el-menu class="el-menu-demo"
+             mode="horizontal"
+             background-color="#099cec"
+             text-color="#fff"
+             :default-active="menuActive"
+             active-text-color="#ffd04b">
+        <el-submenu v-for="(item, index) of menuList"
+                    :key="index"
+                    :index="item.index"
+                    :code="item.code">
             <template slot="title">{{item.title}}</template>
-            <el-menu-item v-for="(cItem, cIndex) of item.children" :key="cIndex" :index="cItem.index" :code="item.code">
-                <router-link @click.native="changeSysAndFirst({system: item.title, first: cItem.title, systemCode: item.code, firstMenuCode: cItem.code})" :to="cItem.router">{{cItem.title}}</router-link>
+            <el-menu-item v-for="(cItem, cIndex) of item.children"
+                          :key="cIndex"
+                          :index="cItem.index"
+                          :code="item.code">
+                <router-link @click.native="getSiderbarParams(cItem.router)"
+                             :to="cItem.router">{{cItem.title}}</router-link>
             </el-menu-item>
         </el-submenu>
     </el-menu>
 </template>
 <script>
 import { mapMutations } from 'vuex'
+import axios from 'axios'
 export default {
+    watch: {
+        $route() {
+            // this.getSiderbarParams(this.$router.history.current.path)
+        }
+    },
     data() {
         return {
-            menuList: [
-                {
-                    title: "总系统管理",
-                    index: "1",
-                    code: "portal",
-                    children: [
-                        {
-                            title: "基础信息",
-                            index: "1-1",
-                            code: "baseInfo",
-                            router: "/portal/baseInfo"
-                        },
-                        {
-                            title: "个人信息",
-                            index: "1-2",
-                            code: "personInfo",
-                            router: "/portal/personInfo"
-                        }
-                    ]
-                },
-                {
-                    title: "核心系统",
-                    index: "2",
-                    code: "cmc",
-                    children: [
-                        {
-                            title: "会员管理",
-                            index: "2-1",
-                            code: "member",
-                            router: "/cmc/member"
-                        },
-                        {
-                            title: "卖品管理",
-                            index: "2-2",
-                            code: "member",
-                            router: "/cmc/snack"
-                        }
-                    ]
-                },
-                {
-                    title: "票务系统",
-                    index: "3",
-                    code: "ticket",
-                    children: [
-                        {
-                            title: "影片管理",
-                            index: "3-1",
-                            code: "movie",
-                            router: "/ticket/movie"
-                        },
-                        {
-                            title: "数据匹配",
-                            index: "3-2",
-                            code: "match",
-                            router: "/ticket/match"
-                        },
-                        {
-                            title: "排期管理",
-                            index: "3-3",
-                            code: "showtime",
-                            router: "/ticket/showtime"
-                        }
-                    ]
-                }
-            ]
-        };
+            menuList: [],
+            menuActive: ''
+        }
     },
     methods: {
-        ...mapMutations('global', ['changeSysAndFirst'])
+        ...mapMutations('global', [
+            'changeSysCode',
+            'changeMenuCode',
+            'changeSysAndFirst',
+            'changeSidebarList'
+        ]),
+        getMenuData() {
+            axios.get('/api/getHeaderNav').then(res => {
+                this.menuList = res.data
+                const router = this.$router.history.current.path
+                for (const item of this.menuList) {
+                    if (router === item.router) {
+                        this.menuActive = item.index
+                    } else {
+                        for (const cItem of item.children) {
+                            if (router === cItem.router) {
+                                this.menuActive = cItem.index
+                            }
+                        }
+                    }
+                }
+            })
+        },
+        getSiderbarParams(path) {
+            const pathArr = path.slice(1).split('/')
+            if (pathArr.length === 2) {
+                this.changeSysCode(pathArr[0])
+                this.changeMenuCode(pathArr[1])
+                this.getSiderbarData(pathArr[0], pathArr[1])
+            }
+        },
+        getSiderbarData(systemCode, menuCode) {
+            axios
+                .get(
+                    `/api/getSidebar?sysCode=${systemCode}&menuCode=${menuCode}`
+                )
+                .then(res => {
+                    this.changeSidebarList(res.data)
+                })
+        }
+    },
+    created() {
+        this.getMenuData()
     }
-};
+}
 </script>
+<style lang="scss" scoped>
+.el-submenu__title i{
+    color: red!important;
+}
+</style>

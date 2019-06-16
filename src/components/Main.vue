@@ -24,7 +24,6 @@
 import Header from './Header.vue'
 import Sidebar from './Sidebar'
 import Breadcrumb from './Breadcrumb'
-import { mapState, mapMutations } from 'vuex'
 
 export default {
     name: 'Main',
@@ -37,30 +36,10 @@ export default {
         welcomeShow() {
             return this.$route.path === '/' ? true : false
         },
-        ...mapState('global', [
-            'system',
-            'firstLevelMenu',
-            'secondLevelMenu',
-            'thirdLevelMenu'
-        ])
     },
     methods: {
-        ...mapMutations('global', ['changeSysAndFirst']),
-        changeMenu(system, first) {
-            //调后端接口拿到code对应的name
-
-            this.changeSysAndFirst({
-                system: '核心系统',
-                first: '会员管理',
-                systemCode: system,
-                firstMenuCode: first
-            })
-        }
     },
     mounted() {
-        console.log('mounted====' + this.$route.path)
-        //将路径转为systemCode 和 firstMenuCode
-        this.changeMenu('cmc', 'member')
     }
 }
 </script>
@@ -69,7 +48,7 @@ export default {
     padding: 0;
 }
 .sidebar {
-    background-color: rgb(84, 92, 100);
+    background-color: #fff;
     margin-bottom: -10000px;
     padding-bottom: 10000px;
 }

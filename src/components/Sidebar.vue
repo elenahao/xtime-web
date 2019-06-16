@@ -1,19 +1,18 @@
 <template>
-    <div class="nav">
-        <el-menu default-active="2"
-                 class="el-menu-vertical-demo"
-                 @open="handleOpen"
-                 @close="handleClose"
-                 background-color="#545c64"
-                 text-color="#fff"
-                 active-text-color="#ffd04b">
+    <div class="sidebar">
+        <el-menu class="el-menu-vertical-demo"
+                 background-color="#fff"
+                 text-color="#303133"
+                 :default-active="sidebarActive"
+                 active-text-color="#409EFF">
             <template v-for="(item, index) of sidebarList">
                 <!-- 单层 -->
                 <el-menu-item v-if="item.children.length === 0"
-                              :key="index+1">
+                              :key="index+1"
+                              :index="item.index">
                     <template slot="title">
                         <span>
-                            <router-link :to="'/'+item.router">{{item.title}}</router-link>
+                            <router-link :to="item.router">{{item.title}}</router-link>
                         </span>
                     </template>
                 </el-menu-item>
@@ -23,12 +22,11 @@
                             :index="String(index+1)"
                             :key="cIndex">
                     <template slot="title">
-                        <i class="el-icon-s-fold"></i>
                         <span>{{item.title}}</span>
                     </template>
                     <el-menu-item :key="cIndex+1"
-                                  index="1-1">
-                        <router-link :to="'/'+cItem.router">{{cItem.title}}</router-link>
+                                  :index="cItem.index">
+                        <router-link :to="cItem.router">{{cItem.title}}</router-link>
                     </el-menu-item>
                 </el-submenu>
             </template>
@@ -36,40 +34,61 @@
     </div>
 </template>
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import axios from 'axios'
 export default {
-    name: 'Nav',
+    name: 'Sidebar',
+    watch: {},
     data() {
         return {
-            sidebarList: []
+            sidebarActive: ""
         }
     },
     computed: {
-        ...mapState('global', ['system', 'firstLevelMenu']),
-        ...mapGetters('global', ['getSysAndFirst'])
+        ...mapState('global', ['systemCode', 'menuCode', 'sidebarList'])
     },
     methods: {
-        handleOpen(key, keyPath) {
-            console.log(key, keyPath)
+        ...mapMutations('global', ['changeSidebarList']),
+        getSiderbarData(systemCode, menuCode) {
+            axios
+                .get(
+                    `/api/getSidebar?sysCode=${systemCode}&menuCode=${menuCode}`
+                )
+                .then(res => {
+                    this.changeSidebarList(res.data)
+                    const router = this.$router.history.current.path
+                    for (const item of this.sidebarList) {
+                        if (router === item.router) {
+                            this.sidebarActive = item.index
+                        } else {
+                            for (const cItem of item.children) {
+                                if (router === cItem.router) {
+                                    this.sidebarActive = cItem.index
+                                }
+                            }
+                        }
+                    }
+                    console.log(this.sidebarActive)
+                })
         },
-        handleClose(key, keyPath) {
-            console.log(key, keyPath)
+        getSiderbarParams() {
+            const path = this.$router.history.current.path
+            const pathArr = path.slice(1).split('/')
+            this.getSiderbarData(pathArr[0], pathArr[1])
         }
     },
-    watch: {
-        getSysAndFirst: function(val) {
-            console.log(val)
-            //调用接口获取url对应的左侧菜单栏数据
-            axios.get('/api/getSidebar?code=' + val).then(res => {
-                this.sidebarList = res.data
-            })
-        }
+    created() {
+        this.getSiderbarParams()
     }
 }
 </script>
 <style lang="scss" scoped>
 .el-menu {
     border-right: 0;
+}
+.sidebar{
+    a{
+        color: #333;
+    }
 }
 </style>

@@ -2,6 +2,7 @@
 import Main from '@/components/Main.vue'
 import BaseInfo from './components/portal/baseInfo'
 import PersonInfo from './components/portal/personInfo'
+import Login from "@/views/Login"
 export default [{
         path: '/',
         name: '首页',
@@ -44,6 +45,11 @@ export default [{
         component: Main,
         name: "排期管理"
     },
+    {
+        path: "/login",
+        component: Login,
+        name: "登录"
+    }
     // {
     //     path: '*',
     //     name: '404',

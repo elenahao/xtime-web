@@ -6,9 +6,11 @@ export default {
         secondLevelMenu: '',
         thirdLevelMenu: '',
         systemCode: '',
+        menuCode: '',
         firstMenuCode: '',
         secondMenuCode: '',
-        thirdMenuCode: ''
+        thirdMenuCode: '',
+        sidebarList: ''
     },
     getters: {
         getSysAndFirst: state => {
@@ -27,6 +29,15 @@ export default {
         },
         changeThirdLevelMenu: (state, thirdLevelMenu) => {
             state.thirdLevelMenu = thirdLevelMenu
+        },
+        changeSysCode: (state, systemCode) => {
+            state.systemCode = systemCode
+        },
+        changeMenuCode: (state, menuCode) => {
+            state.menuCode = menuCode
+        },
+        changeSidebarList: (state, sidebarList) => {
+            state.sidebarList = sidebarList
         }
     }
 }

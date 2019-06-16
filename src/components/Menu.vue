@@ -22,6 +22,7 @@
 </template>
 <script>
 import { mapMutations } from 'vuex'
+import { getMenuListData } from "@/api/common"
 import axios from 'axios'
 export default {
     watch: {
@@ -42,7 +43,9 @@ export default {
             'changeSysAndFirst',
             'changeSidebarList'
         ]),
-        getMenuData() {
+        async getMenuData() {
+            const res = getMenuListData()
+            console.log("ccm - ", res)
             axios.get('/api/getHeaderNav').then(res => {
                 this.menuList = res.data
                 const router = this.$router.history.current.path

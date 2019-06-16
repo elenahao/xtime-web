@@ -1,7 +1,7 @@
 <template>
     <div class="login">
         <div class="login-cont">
-            <h1>xTime</h1>
+            <h1><i class="el-icon-s-platform"></i>xtime</h1>
             <p>请登录您的ID</p>
             <div class="cont">
                 <el-input v-model="userId" placeholder="ID"></el-input>

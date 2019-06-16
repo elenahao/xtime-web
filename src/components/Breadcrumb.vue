@@ -1,5 +1,5 @@
 <template>
-    <el-breadcrumb separator="/">
+    <el-breadcrumb class="breadcrumb" separator="/">
         <el-breadcrumb-item v-for="(item, index) in breadcrumbList" :key="index">{{item.name}}</el-breadcrumb-item>
     </el-breadcrumb>
 </template>
@@ -18,3 +18,8 @@ export default {
 
 }
 </script>
+<style lang="scss" scoped>
+.breadcrumb{
+    margin-bottom: 30px;
+}
+</style>

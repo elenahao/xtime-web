@@ -2,7 +2,7 @@
     <div class="header">
         <router-link class="header-icon"
                      to="/">
-            xTime
+            <i class="el-icon-s-home"></i>xtime
         </router-link>
         <div class="header-menu">
             <Menu />
@@ -40,7 +40,8 @@ export default {
 .header {
     height: 60px;
     padding: 0 30px;
-    background: linear-gradient(#099cec, #418AF1);
+    // background: linear-gradient(#099cec, #418AF1);
+    background-color: #099cec;
     display: flex;
     flex-direction: center;
     align-items: center;

@@ -5,7 +5,7 @@
         </el-header>
         <el-container>
             <p v-if="welcomeShow"
-               class="wel">Welcome to xTime</p>
+               class="wel"><i class="el-icon-s-home"></i>Welcome to xtime</p>
             <el-container v-else>
                 <el-aside width="200px"
                           class="sidebar">
@@ -48,7 +48,7 @@ export default {
     padding: 0;
 }
 .sidebar {
-    background-color: #fff;
+    background-color: #EFF2F7;
     margin-bottom: -10000px;
     padding-bottom: 10000px;
 }

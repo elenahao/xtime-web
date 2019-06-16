@@ -1,7 +1,7 @@
 <template>
     <div class="sidebar">
         <el-menu class="el-menu-vertical-demo"
-                 background-color="#fff"
+                 background-color="#EFF2F7"
                  text-color="#303133"
                  :default-active="sidebarActive"
                  active-text-color="#409EFF">
@@ -12,6 +12,7 @@
                               :index="item.index">
                     <template slot="title">
                         <span>
+                            <i class="el-icon-menu"></i>
                             <router-link :to="item.router">{{item.title}}</router-link>
                         </span>
                     </template>
@@ -22,6 +23,7 @@
                             :index="String(index+1)"
                             :key="cIndex">
                     <template slot="title">
+                        <i class="el-icon-menu"></i>
                         <span>{{item.title}}</span>
                     </template>
                     <el-menu-item :key="cIndex+1"

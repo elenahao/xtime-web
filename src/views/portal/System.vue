@@ -17,8 +17,8 @@
             <el-table-column prop="code" label="系统编码" width="180"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button @click="handleClick(scope.row)" type="text" size="medium">编辑</el-button>
-                    <el-button type="text" size="medium">删除</el-button>
+                    <el-button @click="handleClick(scope.row)" type="info" size="medium" icon="el-icon-setting">编辑</el-button>
+                    <el-button type="danger" size="medium" icon="el-icon-delete">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>

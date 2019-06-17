@@ -54,7 +54,7 @@ export default {
         getSiderbarData(systemCode, menuCode) {
             axios
                 .get(
-                    `/api/getSidebar?sysCode=${systemCode}&menuCode=${menuCode}`
+                    `/api/menu/getSidebar?sysCode=${systemCode}&menuCode=${menuCode}`
                 )
                 .then(res => {
                     this.changeSidebarList(res.data)

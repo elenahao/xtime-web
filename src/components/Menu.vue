@@ -46,7 +46,7 @@ export default {
         async getMenuData() {
             const res = getMenuListData()
             console.log("ccm - ", res)
-            axios.get('/api/getHeaderNav').then(res => {
+            axios.get('/api/menu/getHeaderNav').then(res => {
                 this.menuList = res.data
                 const router = this.$router.history.current.path
                 for (const item of this.menuList) {
@@ -73,7 +73,7 @@ export default {
         getSiderbarData(systemCode, menuCode) {
             axios
                 .get(
-                    `/api/getSidebar?sysCode=${systemCode}&menuCode=${menuCode}`
+                    `/api/menu/getSidebar?sysCode=${systemCode}&menuCode=${menuCode}`
                 )
                 .then(res => {
                     this.changeSidebarList(res.data)

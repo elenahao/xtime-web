@@ -55,7 +55,7 @@
             </el-pagination>
         </p>
         <el-dialog :title="titleName"
-                   :visible.sync="dialogFormVisible">
+                   :visible.sync="dialogFormVisible" width="30%">
             <el-form :model="form">
                 <el-input v-model="form.id"
                           type="hidden"></el-input>
@@ -106,12 +106,12 @@ export default {
     methods: {
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`)
-            this.pageSize = val
+            this.page.pageSize = val
             this.getList()
         },
         handleCurrentChange(val) {
             console.log(`当前页: ${val}`)
-            this.currentPage = val
+            this.page.currentPage = val
             this.getList()
         },
         onSubmit() {

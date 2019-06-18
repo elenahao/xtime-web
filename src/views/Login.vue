@@ -6,32 +6,45 @@
             </h1>
             <p>请登录您的ID</p>
             <div class="cont">
-                <el-input v-model="userCode" placeholder="ID"></el-input>
-                <el-input v-model="password" placeholder="密码" show-password></el-input>
-                <el-button type="primary" @click="loginHandler">登录</el-button>
+                <el-input v-model="userCode"
+                          placeholder="ID"></el-input>
+                <el-input v-model="password"
+                          placeholder="密码"
+                          show-password></el-input>
+                <el-button type="primary"
+                           @click="loginHandler">登录</el-button>
             </div>
         </div>
     </div>
 </template>
 <script>
-import axios from 'axios'
+import Cookie from 'js-cookie'
+import * as Login from '@/api/components/login.js'
 export default {
     data() {
         return {
-            userCode: "",
-            password: ""
-        };
+            userCode: '',
+            password: ''
+        }
     },
     methods: {
         async loginHandler() {
-            await axios
-                .get(`/api/user/login?userCode=${this.userCode}&password=${this.password}`)
-                .then(res => {
-                    console.log(res);
-                });
+            try {
+                const res = await Login.doLogin({
+                    userCode: this.userCode,
+                    password: this.password
+                })
+                Cookie.set('access_token', res.data)
+                let redirect = decodeURIComponent(this.$route.query.redirect || '/');
+                this.$router.push({
+                    path: redirect
+                })
+            } catch (error) {
+                console.log(error)
+            }
         }
     }
-};
+}
 </script>
 <style lang="scss" scoped>
 .login {

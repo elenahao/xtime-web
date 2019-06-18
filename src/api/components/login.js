@@ -1,7 +1,7 @@
 import api from "@/api"
-export const getMenuListData = (data) => {
+export const doLogin = (data) => {
     return api.request({
-        url: `/api/menu/getHeaderNav`,
+        url: `/api/user/login`,
         method: 'get',
         params: data
     })

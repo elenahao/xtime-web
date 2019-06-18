@@ -22,7 +22,7 @@
 </template>
 <script>
 import { mapMutations } from 'vuex'
-import { getMenuListData } from "@/api/common"
+import * as common from '@/api/common'
 import axios from 'axios'
 export default {
     watch: {
@@ -44,23 +44,20 @@ export default {
             'changeSidebarList'
         ]),
         async getMenuData() {
-            const res = getMenuListData()
-            console.log("ccm - ", res)
-            axios.get('/api/menu/getHeaderNav').then(res => {
-                this.menuList = res.data
-                const router = this.$router.history.current.path
-                for (const item of this.menuList) {
-                    if (router === item.router) {
-                        this.menuActive = item.index
-                    } else {
-                        for (const cItem of item.children) {
-                            if (router === cItem.router) {
-                                this.menuActive = cItem.index
-                            }
+            const res = await common.getMenuListData()
+            this.menuList = res.data
+            const router = this.$router.history.current.path
+            for (const item of this.menuList) {
+                if (router === item.router) {
+                    this.menuActive = item.index
+                } else {
+                    for (const cItem of item.children) {
+                        if (router === cItem.router) {
+                            this.menuActive = cItem.index
                         }
                     }
                 }
-            })
+            }
         },
         getSiderbarParams(path) {
             const pathArr = path.slice(1).split('/')
@@ -86,7 +83,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.el-submenu__title i{
-    color: red!important;
+.el-submenu__title i {
+    color: red !important;
 }
 </style>

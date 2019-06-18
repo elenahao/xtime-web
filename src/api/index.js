@@ -1,4 +1,5 @@
 import axios from 'axios'
+import Cookie from 'js-cookie'
 // import qs from 'qs'
 import {
     commonBase
@@ -18,6 +19,17 @@ export default {
                 // 'X-Auth-Token': Cookie.get('access_token'),
                 'X-Requested-With': 'XMLHttpRequest'
             }
+        })
+    },
+    request(config) {
+        return axios(
+            Object.assign(config, {
+                headers: {
+                    'X-Auth-Token': Cookie.get('access_token') ? Cookie.get('access_token') : ""
+                }
+            })
+        ).then((response) => {
+            return response
         })
     }
 }

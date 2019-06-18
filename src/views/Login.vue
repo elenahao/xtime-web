@@ -1,55 +1,67 @@
 <template>
     <div class="login">
         <div class="login-cont">
-            <h1><i class="el-icon-s-platform"></i>xtime</h1>
+            <h1>
+                <i class="el-icon-s-platform"></i>xtime
+            </h1>
             <p>请登录您的ID</p>
             <div class="cont">
-                <el-input v-model="userId" placeholder="ID"></el-input>
+                <el-input v-model="userCode" placeholder="ID"></el-input>
                 <el-input v-model="password" placeholder="密码" show-password></el-input>
-                <el-button type="primary">登录</el-button>
+                <el-button type="primary" @click="loginHandler">登录</el-button>
             </div>
         </div>
     </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
     data() {
         return {
-            userId: "",
-            password: "",
-        }
+            userCode: "",
+            password: ""
+        };
     },
-}
+    methods: {
+        async loginHandler() {
+            await axios
+                .get(`/api/user/login?userCode=${this.userCode}&password=${this.password}`)
+                .then(res => {
+                    console.log(res);
+                });
+        }
+    }
+};
 </script>
 <style lang="scss" scoped>
-.login{
+.login {
     width: 100%;
     height: 100%;
     display: flex;
     position: fixed;
-    background: linear-gradient(#099cec, #418AF1);
+    background: linear-gradient(#099cec, #418af1);
     justify-content: center;
     align-items: center;
     color: #066da5;
     text-align: center;
-    .login-cont{
+    .login-cont {
         width: 350px;
         background-color: #fff;
         border-radius: 5px;
         padding: 80px 50px;
-        h1{
+        h1 {
             font-size: 40px;
             margin-bottom: 20px;
         }
-        p{
+        p {
             font-size: 16px;
             margin-bottom: 50px;
         }
-        .cont{
-            .el-input{
+        .cont {
+            .el-input {
                 margin-bottom: 20px;
             }
-            .el-button{
+            .el-button {
                 padding: 12px 40px;
                 margin-top: 10px;
             }

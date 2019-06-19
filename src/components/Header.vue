@@ -8,10 +8,10 @@
             <Menu />
         </div>
         <div class="header-user">
-            <el-dropdown v-if="isLogin">
+            <el-dropdown v-if="this.isLogin">
                 <span class="el-dropdown-link">
                     <i class="el-icon-s-custom"></i>
-                    管理员
+                    {{username}}    
                 </span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item>注销</el-dropdown-item>
@@ -24,14 +24,18 @@
 </template>
 <script>
 import Menu from './Menu'
+import { mapState} from 'vuex'
 export default {
     name: 'Header',
     components: {
         Menu
     },
+    computed: {
+        ...mapState('global', ['username', 'userRoleName', 'isLogin'])
+    },
     data() {
         return {
-            isLogin: false
+            // isLogin: this.isLogin
         }
     }
 }

@@ -20,6 +20,7 @@
 <script>
 import Cookie from 'js-cookie'
 import * as Login from '@/api/components/login.js'
+import { mapMutations } from 'vuex'
 export default {
     data() {
         return {
@@ -28,17 +29,23 @@ export default {
         }
     },
     methods: {
+        ...mapMutations('global', ['changeUserInfo']),
         async loginHandler() {
             try {
                 const res = await Login.doLogin({
                     userCode: this.userCode,
                     password: this.password
                 })
-                Cookie.set('access_token', res.data)
-                let redirect = decodeURIComponent(this.$route.query.redirect || '/');
-                this.$router.push({
-                    path: redirect
-                })
+                if(res.data != null && res.data.token != null){
+                    Cookie.set('access_token', res.data.token)
+                    this.changeUserInfo({userCode: res.data.userCode, username: res.data.username, userRoleCode: res.data.roleCode, userRoleName: res.data.roleName, isLogin: true});
+                    let redirect = decodeURIComponent(this.$route.query.redirect || '/');
+                    this.$router.push({
+                        path: redirect
+                    })
+                }else{
+                    //提示用户名错误
+                }
             } catch (error) {
                 console.log(error)
             }

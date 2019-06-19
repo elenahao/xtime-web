@@ -10,7 +10,12 @@ export default {
         firstMenuCode: '',
         secondMenuCode: '',
         thirdMenuCode: '',
-        sidebarList: ''
+        sidebarList: '',
+        userCode:'',
+        username:'',
+        userRoleCode:'',
+        userRoleName:'',
+        isLogin: false
     },
     getters: {
         getSysAndFirst: state => {
@@ -38,6 +43,13 @@ export default {
         },
         changeSidebarList: (state, sidebarList) => {
             state.sidebarList = sidebarList
+        },
+        changeUserInfo: (state, userInfo) => {
+            state.userCode = userInfo.userCode
+            state.username = userInfo.username
+            state.userRoleCode = userInfo.userRoleCode
+            state.userRoleName = userInfo.userRoleName
+            state.isLogin = userInfo.isLogin
         }
     }
 }

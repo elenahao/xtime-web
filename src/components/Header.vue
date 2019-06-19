@@ -8,10 +8,10 @@
             <Menu />
         </div>
         <div class="header-user">
-            <el-dropdown v-if="isLogin">
+            <el-dropdown v-if="this.isLogin">
                 <span class="el-dropdown-link">
                     <i class="el-icon-s-custom"></i>
-                    {{username}}
+                    {{username}}    
                 </span>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item>注销</el-dropdown-item>
@@ -35,7 +35,7 @@ export default {
     },
     data() {
         return {
-            isLogin: this.isLogin
+            // isLogin: this.isLogin
         }
     }
 }

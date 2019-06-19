@@ -20,16 +20,13 @@
 <script>
 import Cookie from 'js-cookie'
 import * as Login from '@/api/components/login.js'
-import { mapState, mapMutations } from 'vuex'
+import { mapMutations } from 'vuex'
 export default {
     data() {
         return {
             userCode: '',
             password: ''
         }
-    },
-    computed: {
-        ...mapState('global', ['userCode', 'username', 'userRoleCode', 'userRoleName'])
     },
     methods: {
         ...mapMutations('global', ['changeUserInfo']),

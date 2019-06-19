@@ -11,7 +11,7 @@
         <el-button type="primary" @click="onSubmit">查询</el-button>
       </el-form-item>
     </el-form>
-    <el-button type="success" @click="dialogFormVisible = true">创建</el-button>
+    <el-button class="btn-creat" type="success" @click="dialogFormVisible = true">创建</el-button>
     <el-table :data="tableData" stripe border>
       <el-table-column prop="id" label="ID" width="100"></el-table-column>
       <el-table-column prop="sysName" label="系统名称" width="200"></el-table-column>
@@ -19,15 +19,16 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
-            @click="handleClick(scope.row)"
+            @click="handleUpdate(scope.row)"
             type="info"
             size="medium"
             icon="el-icon-setting"
           >编辑</el-button>
-          <el-button type="danger" size="medium" icon="el-icon-delete">删除</el-button>
+          <el-button type="danger" size="medium" icon="el-icon-delete" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <p class="page-box">
     <el-pagination
       background
       @size-change="handleSizeChange"
@@ -38,14 +39,15 @@
       layout="sizes, prev, pager, next"
       :total="page.totalSize">
     </el-pagination>
-    <el-dialog :title="titleName" :visible.sync="dialogFormVisible">
+    </p>
+    <el-dialog :title="titleName" :visible.sync="dialogFormVisible" width="30%">
       <el-form :model="form">
         <el-input v-model="dialogForm.id" type="hidden"></el-input>
         <el-form-item label="系统名称" :label-width="formLabelWidth">
           <el-input v-model="dialogForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="系统编码" :label-width="formLabelWidth">
-           <el-input v-model="dialogForm.code" autocomplete="off"></el-input>
+           <el-input v-model="dialogForm.code" :disabled="disabled" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -58,7 +60,7 @@
 
 <script>
 import * as System from '@/api/components/portal/system.js'
-import axios from 'axios';
+import axios from 'axios'
 export default {
     name: "system",
     data() {
@@ -82,34 +84,75 @@ export default {
             dialogFormVisible: false,
             formLabelWidth: '100px',
             titleName: "创建系统",
-            buttonName: "创建"
+            buttonName: "创建",
+            disabled: false
         };
     },
     methods: {
         handleSizeChange(val) {
-          console.log(`每页 ${val} 条`);
-          this.pageSize = val;
-          this.getList();
+          console.log(`每页 ${val} 条`)
+          this.pageSize = val
+          this.getList()
         },
         handleCurrentChange(val) {
-          console.log(`当前页: ${val}`);
-          this.currentPage = val;
-          this.getList();
+          console.log(`当前页: ${val}`)
+          this.currentPage = val
+          this.getList()
         },
         onSubmit() {
-            this.getList();
+            this.getList()
         },
-        handleClick(row) {
-            console.log(row);
+        async handleDelete(row){
+            try{
+              const res = await System.deleteSubmit({
+                id: row.id
+              })
+              if(res.data != 0){
+                this.$message({
+                  message: '恭喜您，删除成功',
+                  type: 'success'
+                })
+              }
+              this.page.currentPage = 1
+              this.getList()
+            }catch(error){
+              console.log(error)
+            }
+        },
+        async handleUpdate(row) {
+            console.log(row)
+            this.dialogFormVisible = true
+            this.titleName = '编辑系统'
+            this.buttonName = '保存'
+            this.dialogForm.id = row.id
+            this.dialogForm.code = row.sysCode
+            this.dialogForm.name = row.sysName
+            this.disabled = true
+        },
+        async handleCreate() {
+            this.dialogFormVisible = true
+            this.titleName = '创建系统'
+            this.buttonName = '创建'
+            this.dialogForm.id = 0
+            this.dialogForm.code = ''
+            this.dialogForm.name = ''
+            this.disabled = false
         },
         async handleDialogSubmit() {
           this.dialogFormVisible = false
           try {
-                await System.dialogSubmit({
+                const res = await System.dialogSubmit({
                     id: this.dialogForm.id,
                     code: this.dialogForm.code,
                     name: this.dialogForm.name
                 })
+                if(res.data != 0){
+                    this.$message({
+                    message: '恭喜您，'+ this.buttonName + "成功",
+                    type: 'success'
+                  })
+                }
+                this.getList()
             } catch (error) {
                 console.log(error)
             }
@@ -132,3 +175,14 @@ export default {
     }
 };
 </script>
+<style lang="scss" scoped>
+.btn-creat {
+    margin-bottom: 20px;
+}
+</style>
+<style lang="scss">
+.page-box{
+    width: 100%;
+    text-align: center;
+}
+</style>

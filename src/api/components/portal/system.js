@@ -7,3 +7,11 @@ export const dialogSubmit = (data) => {
         params: data
     })
 }
+
+export const deleteSubmit = (data) => {
+    return api.request({
+        url: `/api/system/deleteById`,
+        method: 'delete',
+        params: data
+    })
+}

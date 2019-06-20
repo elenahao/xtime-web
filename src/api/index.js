@@ -2,7 +2,6 @@ import axios from 'axios'
 import Cookie from 'js-cookie'
 import router from '@/router.js'
 import {
-    Loading,
     Message
 } from 'element-ui'
 // import qs from 'qs'
@@ -13,26 +12,19 @@ import {
 axios.defaults.baseURL = commonBase
 axios.defaults.timeout = 10000;
 // http请求拦截器
-let loadinginstace
 axios.interceptors.request.use(config => {
     // element ui Loading方法
-    loadinginstace = Loading.service({
-        fullscreen: true
-    })
     return config
 }, error => {
-    loadinginstace.close()
     Message.error({
         message: '请求超时'
     })
     return Promise.reject(error)
 })
 // http响应拦截器
-axios.interceptors.response.use(data => { // 响应成功关闭loading
-    loadinginstace.close()
+axios.interceptors.response.use(data => {
     return data
 }, error => {
-    loadinginstace.close()
     Message.error({
         message: '加载失败'
     })
@@ -51,19 +43,36 @@ const checkHttpResponse = (response) => {
     }
 }
 export default {
-    // get(url, params) {
-    //     // host = host || commonBase
-    //     return axios({
-    //         method: 'get',
-    //         url: url,
-    //         params: params,
-    //         timeout: 60000,
-    //         headers: {
-    //             // 'X-Auth-Token': Cookie.get('access_token'),
-    //             'X-Requested-With': 'XMLHttpRequest'
-    //         }
-    //     })
-    // },
+    // 上传文件
+    postFile(url, formData, host) {
+        // host = host || BASEURL
+        return axios({
+                method: 'POST',
+                url: host + url,
+                data: formData,
+                timeout: 600000,
+                headers: {
+                    'X-Auth-Token': Cookie.get('access_token'),
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                }
+            })
+            .then(checkHttpResponse)
+    },
+    // 上传图片之类的文件
+    postFormData(url, data) {
+        return axios({
+                method: 'post',
+                url,
+                data,
+                timeout: 600000,
+                headers: {
+                    'X-Auth-Token': Cookie.get('access_token'),
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8; multipart/form-data;'
+                }
+            })
+            .then(checkHttpResponse)
+    },
     request(config) {
         return axios(
             Object.assign(config, {

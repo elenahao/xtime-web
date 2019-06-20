@@ -12,7 +12,6 @@ export const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-    console.log(from)
     if (to.path !== "/login") {
         let hasAccessToken = Boolean(Cookie.get('access_token'))
         if (!hasAccessToken) {

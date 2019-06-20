@@ -72,7 +72,6 @@ export default {
                             }
                         }
                     }
-                    console.log(this.sidebarActive)
                 })
         },
         getSiderbarParams() {

@@ -19,7 +19,6 @@ export default {
     },
     watch: {
         $route() {
-            console.log("==="+this.$router.history.current.path);
             // this.breadcrumbList = this.$router.history.current.meta.breadcrumb
             const router = this.$router.history.current.path
             for (const item of this.sidebarList) {

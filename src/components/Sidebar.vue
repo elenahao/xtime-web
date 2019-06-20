@@ -47,10 +47,10 @@ export default {
         }
     },
     computed: {
-        ...mapState('global', ['systemCode', 'menuCode', 'sidebarList'])
+        ...mapState('global', ['systemCode', 'menuCode', 'sidebarList', 'breadcrumbList'])
     },
     methods: {
-        ...mapMutations('global', ['changeSidebarList']),
+        ...mapMutations('global', ['changeSidebarList', 'changeBreadcrumbList']),
         getSiderbarData(systemCode, menuCode) {
             axios
                 .get(
@@ -62,10 +62,12 @@ export default {
                     for (const item of this.sidebarList) {
                         if (router === item.router) {
                             this.sidebarActive = item.index
+                            this.changeBreadcrumbList(item.breadcrumbList);
                         } else {
                             for (const cItem of item.children) {
                                 if (router === cItem.router) {
                                     this.sidebarActive = cItem.index
+                                    this.changeBreadcrumbList(item.breadcrumbList);
                                 }
                             }
                         }

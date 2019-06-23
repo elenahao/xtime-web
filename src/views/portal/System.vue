@@ -8,10 +8,10 @@
         <el-input v-model="form.code" placeholder="系统编码"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="onSubmit">查询</el-button>
       </el-form-item>
     </el-form>
-    <el-button class="btn-creat" type="success" @click="dialogFormVisible = true">创建</el-button>
+    <el-button class="btn-creat" type="success" icon="el-icon-plus" @click="dialogFormVisible = true">创建</el-button>
     <el-table :data="tableData" stripe border>
       <el-table-column prop="id" label="ID" width="100"></el-table-column>
       <el-table-column prop="sysName" label="系统名称" width="200"></el-table-column>
@@ -22,7 +22,7 @@
             @click="handleUpdate(scope.row)"
             type="info"
             size="medium"
-            icon="el-icon-setting"
+            icon="el-icon-edit"
           >编辑</el-button>
           <el-button type="danger" size="medium" icon="el-icon-delete" @click="handleDelete(scope.row)">删除</el-button>
         </template>

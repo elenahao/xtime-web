@@ -1,4 +1,5 @@
 import api from "@/api"
+import qs from 'qs'
 
 export const dialogSubmit = (data) => {
     return api.request({
@@ -35,8 +36,8 @@ export const findRoleTransferSubmit = (data) => {
 export const saveUserRoleSubmit = (data) => {
     return api.request({
         url: `/api/role/saveUserRole`,
-        method: 'post',
-        data: data
+        method: 'get',
+        params: qs.stringify(data, {arrayFormat: 'repeat'})
     })
 }
 

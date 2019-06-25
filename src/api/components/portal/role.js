@@ -36,7 +36,7 @@ export const saveUserRoleSubmit = (data) => {
     return api.request({
         url: `/api/role/saveUserRole`,
         method: 'post',
-        data: data
+        data
     })
 }
 

@@ -107,7 +107,8 @@
 <script>
 import * as User from "@/api/components/portal/user.js";
 import * as Role from "@/api/components/portal/role.js";
-// import * as qs from 'qs'
+import Qs from 'qs'
+import axios from 'axios'
 export default {
     name: "user",
     data() {
@@ -195,31 +196,33 @@ export default {
     },
     methods: {
         handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
-            this.pageSize = val;
-            this.getList();
+            console.log(`每页 ${val} 条`)
+            this.page.pageSize = val
+            this.page.currentPage = 1
+            this.getList()
         },
         handleCurrentChange(val) {
-            console.log(`当前页: ${val}`);
-            this.currentPage = val;
-            this.getList();
+            console.log(`当前页: ${val}`)
+            this.page.currentPage = val
+            this.getList()
         },
         onSubmit() {
             this.getList();
         },
         async handleRoleDialogSubmit() {
-            console.log(this.roleResult);
             try {
-                const res = await Role.saveUserRoleSubmit({
-                    userCode: this.userCode,
-                    roleCodes: this.roleResult
-                });
-                if (res.data != "") {
-                    this.$message({
-                        message: "恭喜您，保存成功",
-                        type: "success"
-                    });
-                }
+                await axios
+                .get(
+                    `/api/role/saveUserRole?userCode=${this.userCode}&`+Qs.stringify({roleCodes: this.roleResult}, {arrayFormat: 'repeat'})
+                )
+                .then(res => {
+                    if (res.data === true) {
+                        this.$message({
+                            message: "恭喜您，保存成功",
+                            type: "success"
+                        });
+                    }
+                })
             } catch (error) {
                 console.log(error);
             }

@@ -1,7 +1,6 @@
 <template>
     <div>
         <el-button class="btn-creat" type="success" icon="el-icon-plus" @click="handleCreate">创建</el-button>
-        <!-- <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree> -->
         <el-tree
         :data="menuData"
         node-key="id"
@@ -19,6 +18,7 @@
             <el-button
                 type="text"
                 size="mini"
+                style="color:red"
                 @click="() => remove(node, data)">
                 删除
             </el-button>
@@ -96,9 +96,9 @@ export default {
       },
       async handleDialogSubmit() {
           this.dialogFormVisible = false
-          this.dialogForm.sysCode = this.value.get(0)
+          this.dialogForm.sysCode = this.value[0]
           this.dialogForm.level = this.value.length
-          this.dialogForm.pMenuCode = this.value.get(this.value.length-1)
+          this.dialogForm.pMenuCode = this.value[this.value.length-1]
           try {
                 const res = await Menu.dialogSubmit({
                     id: this.dialogForm.id,
@@ -116,7 +116,7 @@ export default {
                     type: 'success'
                   })
                 }
-                this.getList()
+                this.getMenuData()
             } catch (error) {
                 console.log(error)
             }
@@ -154,4 +154,14 @@ export default {
 .btn-creat {
     margin-bottom: 20px;
 }
+</style>
+<style>
+  .custom-tree-node {
+    /* flex: 1; */
+    display: flex;
+    /* align-items: auto; */
+    /* justify-content: space-between; */
+    /* font-size: 14px; */
+     /* padding-left: 10px; */
+  }
 </style>

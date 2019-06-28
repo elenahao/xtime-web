@@ -23,3 +23,11 @@ export const listSubmit = (data) => {
         params: data
     })
 }
+
+export const getPermDataSubmit = (data) => {
+    return api.request({
+        url: `/api/perm/getPermTree`,
+        method: 'get',
+        params: data
+    })
+}

@@ -41,7 +41,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="page.currentPage"
-      :page-sizes="[2, 10, 50, 100]"
+      :page-sizes="[5, 10, 50, 100]"
       :page-size="page.pageSize"
       layout="sizes, prev, pager, next"
       :total="page.totalSize">
@@ -91,7 +91,7 @@ export default {
             menuData: [],
             page: {
               currentPage : 1,
-              pageSize : 2,
+              pageSize : 5,
               totalSize: 0
             },
             form: {

@@ -45,7 +45,7 @@
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page.sync="page.currentPage"
-                :page-sizes="[2, 10, 50, 100]"
+                :page-sizes="[5, 10, 50, 100]"
                 :page-size="page.pageSize"
                 layout="sizes, prev, pager, next"
                 :total="page.totalSize"
@@ -66,19 +66,34 @@
                 <el-button type="primary" @click="handleDialogSubmit('dialogForm')">{{buttonName}}</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="权限配置" :visible.sync="dialogPermFormVisible" >
+            <el-tree
+            :data="permData"
+            show-checkbox
+            default-expand-all
+            node-key="id"
+            highlight-current>
+            </el-tree>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogPermFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handlePermDialogSubmit">保存</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
 import * as Role from "@/api/components/portal/role.js"
+import * as Perm from "@/api/components/portal/perm.js"
 import Qs from 'qs'
 import axios from 'axios'
 export default {
     name: "user",
     data() {
         return {
+            permData: [],
             page: {
                 currentPage: 1,
-                pageSize: 2,
+                pageSize: 5,
                 totalSize: 0
             },
             form: {
@@ -118,7 +133,8 @@ export default {
             formLabelWidth: "100px",
             titleName: "创建角色",
             buttonName: "创建",
-            disabled: false
+            disabled: false,
+            dialogPermFormVisible: false
         };
     },
     methods: {
@@ -176,7 +192,18 @@ export default {
             this.disabled = false
         },
         async handleRole(row) {
-            this.roleCode = row.roleCode;
+            this.roleCode = row.roleCode
+            this.dialogPermFormVisible = true
+        try {
+                const res = await Perm.getPermDataSubmit({});
+                console.log(res);
+                this.permData = res.data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        handlePermDialogSubmit(){
+
         },
         async handleDialogSubmit(dialogForm) {
             await this.$refs[dialogForm].validate(valid => {

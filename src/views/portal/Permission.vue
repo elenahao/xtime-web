@@ -1,10 +1,240 @@
 <template>
-    <div>
-        <h1>权限管理</h1>
-    </div>
-</template>
+  <div>
+    <el-form :inline="true" :model="form" class="demo-form-inline">
+      <el-form-item label="权限名称">
+        <el-input v-model="form.name" placeholder="权限名称"></el-input>
+      </el-form-item>
+      <el-form-item label="权限编码">
+        <el-input v-model="form.code" placeholder="权限编码"></el-input>
+      </el-form-item>
+      <el-form-item label="所属菜单" :label-width="formLabelWidth">
+                <el-cascader
+                v-model="value"
+                :options="menuData"
+                :props="{ expandTrigger: 'hover'}"
+                @change="handleChange" clearable></el-cascader>
+        </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="onSubmit">查询</el-button>
+      </el-form-item>
+    </el-form>
+    <el-button class="btn-creat" type="success" icon="el-icon-plus" @click="dialogFormVisible = true">创建</el-button>
+    <el-table :data="tableData" stripe border>
+      <el-table-column prop="id" label="ID" width="100"></el-table-column>
+      <el-table-column prop="permName" label="权限名称" width="200"></el-table-column>
+      <el-table-column prop="permCode" label="权限编码" width="180"></el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button
+            @click="handleUpdate(scope.row)"
+            type="info"
+            size="medium"
+            icon="el-icon-edit"
+          >编辑</el-button>
+          <el-button type="danger" size="medium" icon="el-icon-delete" @click="handleDelete(scope.row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <p class="page-box">
+    <el-pagination
+      background
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page.sync="page.currentPage"
+      :page-sizes="[5, 10, 50, 100]"
+      :page-size="page.pageSize"
+      layout="sizes, prev, pager, next"
+      :total="page.totalSize">
+    </el-pagination>
+    </p>
+    <el-dialog :title="titleName" :visible.sync="dialogFormVisible" width="30%">
+      <el-form :model="form">
+        <el-input v-model="dialogForm.id" type="hidden"></el-input>
+        <el-form-item label="权限名称" :label-width="formLabelWidth">
+          <el-input v-model="dialogForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="权限编码" :label-width="formLabelWidth">
+           <el-input v-model="dialogForm.code" :disabled="disabled" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="所属菜单" :label-width="formLabelWidth">
+                <el-cascader
+                v-model="dialogValue"
+                :options="menuData"
+                :props="{ expandTrigger: 'hover'}"
+                @change="handleChange" clearable></el-cascader>
+        </el-form-item>
+        <el-form-item label="菜单项" :label-width="formLabelWidth">
+            <el-switch
+                v-model="dialogForm.menuItem"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+                active-value="1"
+                inactive-value="2">
+                </el-switch>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleDialogSubmit">{{buttonName}}</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template> 
 <script>
+import * as Perm from '@/api/components/portal/perm.js';
+import * as Menu from '@/api/components/portal/menu.js';
 export default {
-    name: "permission"
-}
+    data() {
+        return {
+            dialogValue:[],
+            value: [],
+            menuData: [],
+            page: {
+              currentPage : 1,
+              pageSize : 5,
+              totalSize: 0
+            },
+            form: {
+                id: 0,
+                name: "",
+                code: "",
+                menuCode: ""
+            },
+            dialogForm: {
+                id: 0, 
+                name: "",
+                code: "",
+                menuItem: "",
+                menuCode: "",
+                sysCode: ""
+            },
+            tableData: [],
+            dialogFormVisible: false,
+            formLabelWidth: '100px',
+            titleName: "创建权限",
+            buttonName: "创建",
+            disabled: false
+        };
+    },
+    methods: {
+        async getMenuData(){
+            try {
+                const res = await Menu.getMenuDataSubmit({});
+                console.log(res);
+                this.menuData = res.data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        handleSizeChange(val) {
+          console.log(`每页 ${val} 条`)
+          this.page.pageSize = val
+          this.page.currentPage = 1
+          this.getList()
+        },
+        handleCurrentChange(val) {
+          console.log(`当前页: ${val}`)
+          this.page.currentPage = val
+          this.getList()
+        },
+        onSubmit() {
+            this.getList()
+        },
+        handleChange(value) {
+            console.log(value);
+        },
+        async handleDelete(row){
+            try{
+              const res = await Perm.deleteSubmit({
+                id: row.id
+              })
+              if(res.data != 0){
+                this.$message({
+                  message: '恭喜您，删除成功',
+                  type: 'success'
+                })
+              }
+              this.page.currentPage = 1
+              this.getList()
+            }catch(error){
+              console.log(error)
+            }
+        },
+        async handleUpdate(row) {
+            console.log(row)
+            this.dialogFormVisible = true
+            this.titleName = '编辑权限'
+            this.buttonName = '保存'
+            this.dialogForm.id = row.id
+            this.dialogForm.code = row.permCode
+            this.dialogForm.name = row.permName
+            this.disabled = true
+        },
+        async handleCreate() {
+            this.dialogFormVisible = true
+            this.titleName = '创建权限'
+            this.buttonName = '创建'
+            this.dialogForm.id = 0
+            this.dialogForm.code = ''
+            this.dialogForm.name = ''
+            this.disabled = false
+        },
+        async handleDialogSubmit() {
+          this.dialogFormVisible = false
+          this.dialogForm.sysCode = this.dialogValue[0]
+          this.dialogForm.menuCode = this.dialogValue[this.dialogValue.length-1]
+          try {
+                const res = await Perm.dialogSubmit({
+                    id: this.dialogForm.id,
+                    code: this.dialogForm.code,
+                    name: this.dialogForm.name
+                })
+                if(res.data != 0){
+                    this.$message({
+                    message: '恭喜您，'+ this.buttonName + "成功",
+                    type: 'success'
+                  })
+                }
+                this.getList()
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        async getList() {
+            if(this.value.length != 0){
+                this.form.menuCode = this.value[this.value.length-1]
+            }
+            try {
+                const res = await Perm.listSubmit({
+                    code: this.form.code,
+                    name: this.form.name,
+                    menuCode: this.form.menuCode,
+                    currentPage: this.page.currentPage,
+                    pageSize: this.page.pageSize
+                });
+                this.tableData = res.data.list;
+                this.page.currentPage = res.data.currentPage;
+                this.page.pageSize = res.data.pageSize;
+                this.page.totalSize = res.data.totalSize;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    },
+    created() {
+      this.getList();
+      this.getMenuData();
+    }
+};
 </script>
+<style lang="scss" scoped>
+.btn-creat {
+    margin-bottom: 20px;
+}
+</style>
+<style lang="scss">
+.page-box{
+    width: 100%;
+    text-align: center;
+}
+</style>

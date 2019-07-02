@@ -32,11 +32,11 @@ export const findRoleTransferSubmit = (data) => {
     })
 }
 
-export const saveUserRoleSubmit = (data) => {
+export const saveUserRole = (data) => {
     return api.request({
         url: `/api/role/saveUserRole`,
-        method: 'post',
-        data
+        method: 'get',
+        params: data
     })
 }
 

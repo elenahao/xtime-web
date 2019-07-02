@@ -55,10 +55,10 @@
             <el-form :model="dialogForm" :rules="rules" ref="dialogForm" status-icon>
                 <el-input v-model="dialogForm.id" type="hidden"></el-input>
                 <el-form-item label="角色编码" :label-width="formLabelWidth" prop="roleCode">
-                    <el-input v-model="dialogForm.roleCode" autocomplete="off"></el-input>
+                    <el-input v-model="dialogForm.roleCode" :disabled="disabled" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="角色名称" :label-width="formLabelWidth" prop="roleName">
-                    <el-input v-model="dialogForm.roleName" :disabled="disabled" autocomplete="off"></el-input>
+                    <el-input v-model="dialogForm.roleName" autocomplete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -72,6 +72,7 @@
             show-checkbox
             default-expand-all
             node-key="id"
+            ref="tree"
             highlight-current>
             </el-tree>
             <div slot="footer" class="dialog-footer">
@@ -108,9 +109,9 @@ export default {
                         trigger: "blur"
                     },
                     {
-                        min: 5,
+                        min: 2,
                         max: 20,
-                        message: "长度在5-20字符",
+                        message: "长度在2-20字符",
                         trigger: "blur"
                     }
                 ],
@@ -152,11 +153,19 @@ export default {
         onSubmit() {
             this.getList();
         },
-        async handleRoleDialogSubmit() {
+        async handlePermDialogSubmit() {
+            let checkedNodes = this.$refs.tree.getCheckedNodes()
+            let permCodes = [];
+            for(var node of checkedNodes){
+                console.log(node);
+                if(node.children == null){
+                    permCodes.push(node.value)
+                }
+            }
             try {
                 await axios
                 .get(
-                    `/api/role/saveUserRole?roleCode=${this.roleCode}&`+Qs.stringify({roleCodes: this.roleResult}, {arrayFormat: 'repeat'})
+                    `/api/role/saveRolePerm?roleCode=${this.roleCode}&`+Qs.stringify({permCodes: permCodes}, {arrayFormat: 'repeat'})
                 )
                 .then(res => {
                     if (res.data === true) {
@@ -165,6 +174,7 @@ export default {
                             type: "success"
                         });
                     }
+                    this.dialogPermFormVisible = false
                 })
             } catch (error) {
                 console.log(error);
@@ -189,7 +199,7 @@ export default {
             this.dialogForm.id = row.id
             this.dialogForm.roleCode = row.roleCode
             this.dialogForm.roleName = row.roleName
-            this.disabled = false
+            this.disabled = true
         },
         async handleRole(row) {
             this.roleCode = row.roleCode
@@ -201,9 +211,6 @@ export default {
             } catch (error) {
                 console.log(error);
             }
-        },
-        handlePermDialogSubmit(){
-
         },
         async handleDialogSubmit(dialogForm) {
             await this.$refs[dialogForm].validate(valid => {

@@ -31,3 +31,11 @@ export const getPermDataSubmit = (data) => {
         params: data
     })
 }
+
+export const getPermInfoSubmit = (data) => {
+    return api.request({
+        url: `/api/perm/getPermInfoSubmit`,
+        method: 'get',
+        params: data
+    })
+}

@@ -18,11 +18,11 @@
         <el-button type="primary" icon="el-icon-search" @click="onSubmit">查询</el-button>
       </el-form-item>
     </el-form>
-    <el-button class="btn-creat" type="success" icon="el-icon-plus" @click="dialogFormVisible = true">创建</el-button>
+    <el-button class="btn-creat" type="success" icon="el-icon-plus" @click="handleCreate">创建</el-button>
     <el-table :data="tableData" stripe border>
       <el-table-column prop="id" label="ID" width="100"></el-table-column>
-      <el-table-column prop="permName" label="权限名称" width="200"></el-table-column>
-      <el-table-column prop="permCode" label="权限编码" width="180"></el-table-column>
+      <el-table-column prop="permName" label="权限名称" width="280"></el-table-column>
+      <el-table-column prop="permCode" label="权限编码" width="480"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
@@ -61,15 +61,13 @@
                 v-model="dialogValue"
                 :options="menuData"
                 :props="{ expandTrigger: 'hover'}"
-                @change="handleChange" clearable></el-cascader>
+                @change="handleChange" clearable
+                :disabled="disabled"></el-cascader>
         </el-form-item>
         <el-form-item label="菜单项" :label-width="formLabelWidth">
             <el-switch
-                v-model="dialogForm.menuItem"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-                active-value="1"
-                inactive-value="2">
+                v-model="ifMenu"
+                :disabled="disabled">
                 </el-switch>
         </el-form-item>
       </el-form>
@@ -89,6 +87,7 @@ export default {
             dialogValue:[],
             value: [],
             menuData: [],
+            ifMenu: false,
             page: {
               currentPage : 1,
               pageSize : 5,
@@ -104,9 +103,9 @@ export default {
                 id: 0, 
                 name: "",
                 code: "",
-                menuItem: "",
                 menuCode: "",
-                sysCode: ""
+                sysCode: "",
+                menuItems: ""
             },
             tableData: [],
             dialogFormVisible: false,
@@ -119,7 +118,7 @@ export default {
     methods: {
         async getMenuData(){
             try {
-                const res = await Menu.getMenuDataSubmit({});
+                const res = await Menu.getPermMenuDataSubmit({});
                 console.log(res);
                 this.menuData = res.data;
             } catch (error) {
@@ -168,7 +167,15 @@ export default {
             this.dialogForm.id = row.id
             this.dialogForm.code = row.permCode
             this.dialogForm.name = row.permName
+            this.dialogForm.menuCode = row.menuCode
+            if(row.ifMenu==1){
+              this.ifMenu = true
+            }
+            if(row.ifMenu==2){
+              this.ifMenu = false
+            }
             this.disabled = true
+            this.dialogValue = row.menuItems.split(',')
         },
         async handleCreate() {
             this.dialogFormVisible = true
@@ -178,16 +185,28 @@ export default {
             this.dialogForm.code = ''
             this.dialogForm.name = ''
             this.disabled = false
+            this.dialogValue = []
+            this.ifMenu = false
         },
         async handleDialogSubmit() {
           this.dialogFormVisible = false
           this.dialogForm.sysCode = this.dialogValue[0]
           this.dialogForm.menuCode = this.dialogValue[this.dialogValue.length-1]
+          var ifMenuParam = "";
+          if(this.ifMenu){
+            ifMenuParam = 1
+          }else{
+            ifMenuParam = 2
+          }
           try {
                 const res = await Perm.dialogSubmit({
                     id: this.dialogForm.id,
                     code: this.dialogForm.code,
-                    name: this.dialogForm.name
+                    name: this.dialogForm.name,
+                    ifMenu: ifMenuParam,
+                    menuCode: this.dialogForm.menuCode,
+                    sysCode: this.dialogForm.sysCode,
+                    menuItems: this.dialogValue.join(",")
                 })
                 if(res.data != 0){
                     this.$message({

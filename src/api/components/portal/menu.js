@@ -23,3 +23,11 @@ export const getMenuDataSubmit = (data) => {
         params: data
     })
 }
+
+export const getPermMenuDataSubmit = (data) => {
+    return api.request({
+        url: `/api/menu/getPermMenuTree`,
+        method: 'get',
+        params: data
+    })
+}

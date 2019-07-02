@@ -45,7 +45,7 @@
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page.sync="page.currentPage"
-                :page-sizes="[2, 10, 50, 100]"
+                :page-sizes="[5, 10, 50, 100]"
                 :page-size="page.pageSize"
                 layout="sizes, prev, pager, next"
                 :total="page.totalSize"
@@ -55,10 +55,10 @@
             <el-form :model="dialogForm" :rules="rules" ref="dialogForm" status-icon>
                 <el-input v-model="dialogForm.id" type="hidden"></el-input>
                 <el-form-item label="角色编码" :label-width="formLabelWidth" prop="roleCode">
-                    <el-input v-model="dialogForm.roleCode" autocomplete="off"></el-input>
+                    <el-input v-model="dialogForm.roleCode" :disabled="disabled" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="角色名称" :label-width="formLabelWidth" prop="roleName">
-                    <el-input v-model="dialogForm.roleName" :disabled="disabled" autocomplete="off"></el-input>
+                    <el-input v-model="dialogForm.roleName" autocomplete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -66,19 +66,35 @@
                 <el-button type="primary" @click="handleDialogSubmit('dialogForm')">{{buttonName}}</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="权限配置" :visible.sync="dialogPermFormVisible" >
+            <el-tree
+            :data="permData"
+            show-checkbox
+            default-expand-all
+            node-key="id"
+            ref="tree"
+            highlight-current>
+            </el-tree>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogPermFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handlePermDialogSubmit">保存</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
 import * as Role from "@/api/components/portal/role.js"
+import * as Perm from "@/api/components/portal/perm.js"
 import Qs from 'qs'
 import axios from 'axios'
 export default {
     name: "user",
     data() {
         return {
+            permData: [],
             page: {
                 currentPage: 1,
-                pageSize: 2,
+                pageSize: 5,
                 totalSize: 0
             },
             form: {
@@ -93,9 +109,9 @@ export default {
                         trigger: "blur"
                     },
                     {
-                        min: 5,
+                        min: 2,
                         max: 20,
-                        message: "长度在5-20字符",
+                        message: "长度在2-20字符",
                         trigger: "blur"
                     }
                 ],
@@ -118,7 +134,8 @@ export default {
             formLabelWidth: "100px",
             titleName: "创建角色",
             buttonName: "创建",
-            disabled: false
+            disabled: false,
+            dialogPermFormVisible: false
         };
     },
     methods: {
@@ -136,11 +153,19 @@ export default {
         onSubmit() {
             this.getList();
         },
-        async handleRoleDialogSubmit() {
+        async handlePermDialogSubmit() {
+            let checkedNodes = this.$refs.tree.getCheckedNodes()
+            let permCodes = [];
+            for(var node of checkedNodes){
+                console.log(node);
+                if(node.children == null){
+                    permCodes.push(node.value)
+                }
+            }
             try {
                 await axios
                 .get(
-                    `/api/role/saveUserRole?roleCode=${this.roleCode}&`+Qs.stringify({roleCodes: this.roleResult}, {arrayFormat: 'repeat'})
+                    `/api/role/saveRolePerm?roleCode=${this.roleCode}&`+Qs.stringify({permCodes: permCodes}, {arrayFormat: 'repeat'})
                 )
                 .then(res => {
                     if (res.data === true) {
@@ -149,6 +174,7 @@ export default {
                             type: "success"
                         });
                     }
+                    this.dialogPermFormVisible = false
                 })
             } catch (error) {
                 console.log(error);
@@ -173,10 +199,18 @@ export default {
             this.dialogForm.id = row.id
             this.dialogForm.roleCode = row.roleCode
             this.dialogForm.roleName = row.roleName
-            this.disabled = false
+            this.disabled = true
         },
         async handleRole(row) {
-            this.roleCode = row.roleCode;
+            this.roleCode = row.roleCode
+            this.dialogPermFormVisible = true
+        try {
+                const res = await Perm.getPermDataSubmit({});
+                console.log(res);
+                this.permData = res.data;
+            } catch (error) {
+                console.log(error);
+            }
         },
         async handleDialogSubmit(dialogForm) {
             await this.$refs[dialogForm].validate(valid => {

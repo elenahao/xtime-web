@@ -66,15 +66,16 @@
                 <el-button type="primary" @click="handleDialogSubmit('dialogForm')">{{buttonName}}</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="权限配置" :visible.sync="dialogPermFormVisible" >
+        <el-dialog title="权限配置" :visible.sync="dialogPermFormVisible">
             <el-tree
-            :data="permData"
-            show-checkbox
-            default-expand-all
-            node-key="id"
-            ref="tree"
-            highlight-current>
-            </el-tree>
+                :data="permData"
+                show-checkbox
+                default-expand-all
+                node-key="id"
+                :default-checked-keys="defaultChecked"
+                ref="tree"
+                highlight-current
+            ></el-tree>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogPermFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="handlePermDialogSubmit">保存</el-button>
@@ -83,10 +84,10 @@
     </div>
 </template>
 <script>
-import * as Role from "@/api/components/portal/role.js"
-import * as Perm from "@/api/components/portal/perm.js"
-import Qs from 'qs'
-import axios from 'axios'
+import * as Role from "@/api/components/portal/role.js";
+import * as Perm from "@/api/components/portal/perm.js";
+import Qs from "qs";
+import axios from "axios";
 export default {
     name: "user",
     data() {
@@ -135,14 +136,15 @@ export default {
             titleName: "创建角色",
             buttonName: "创建",
             disabled: false,
-            dialogPermFormVisible: false
+            dialogPermFormVisible: false,
+            defaultChecked: []
         };
     },
     methods: {
         handleSizeChange(val) {
             console.log(`每页 ${val} 条`);
-            this.page.pageSize = val
-            this.page.currentPage = 1
+            this.page.pageSize = val;
+            this.page.currentPage = 1;
             this.getList();
         },
         handleCurrentChange(val) {
@@ -154,60 +156,70 @@ export default {
             this.getList();
         },
         async handlePermDialogSubmit() {
-            let checkedNodes = this.$refs.tree.getCheckedNodes()
+            let checkedNodes = this.$refs.tree.getCheckedNodes();
             let permCodes = [];
-            for(var node of checkedNodes){
+            for (var node of checkedNodes) {
                 console.log(node);
-                if(node.children == null){
-                    permCodes.push(node.value)
+                if (node.children == null) {
+                    permCodes.push(node.value);
                 }
             }
             try {
                 await axios
-                .get(
-                    `/api/role/saveRolePerm?roleCode=${this.roleCode}&`+Qs.stringify({permCodes: permCodes}, {arrayFormat: 'repeat'})
-                )
-                .then(res => {
-                    if (res.data === true) {
-                        this.$message({
-                            message: "恭喜您，保存成功",
-                            type: "success"
-                        });
-                    }
-                    this.dialogPermFormVisible = false
-                })
+                    .get(
+                        `/api/role/saveRolePerm?roleCode=${this.roleCode}&` +
+                            Qs.stringify(
+                                { permCodes: permCodes },
+                                { arrayFormat: "repeat" }
+                            )
+                    )
+                    .then(res => {
+                        if (res.data === true) {
+                            this.$message({
+                                message: "恭喜您，保存成功",
+                                type: "success"
+                            });
+                        }
+                        this.dialogPermFormVisible = false;
+                    });
             } catch (error) {
                 console.log(error);
             }
         },
         async handleCreate() {
-            this.dialogFormVisible = true
-            this.titleName = "创建角色"
-            this.buttonName = "创建"
-            this.dialogForm.id = 0
-            this.dialogForm.roleCode = ""
-            this.dialogForm.roleName = ""
-            this.disabled = false
+            this.dialogFormVisible = true;
+            this.titleName = "创建角色";
+            this.buttonName = "创建";
+            this.dialogForm.id = 0;
+            this.dialogForm.roleCode = "";
+            this.dialogForm.roleName = "";
+            this.disabled = false;
         },
         async handleDelete(row) {
             console.log(row);
         },
         async handleUpdate(row) {
-            this.dialogFormVisible = true
-            this.titleName = "修改角色"
+            this.dialogFormVisible = true;
+            this.titleName = "修改角色";
             this.buttonName = "保存";
-            this.dialogForm.id = row.id
-            this.dialogForm.roleCode = row.roleCode
-            this.dialogForm.roleName = row.roleName
-            this.disabled = true
+            this.dialogForm.id = row.id;
+            this.dialogForm.roleCode = row.roleCode;
+            this.dialogForm.roleName = row.roleName;
+            this.disabled = true;
         },
         async handleRole(row) {
-            this.roleCode = row.roleCode
-            this.dialogPermFormVisible = true
-        try {
-                const res = await Perm.getPermDataSubmit({});
+            this.roleCode = row.roleCode;
+            this.dialogPermFormVisible = true;
+            try {
+                const res = await Perm.getPermDataSubmit({
+                    roleCode: this.roleCode
+                });
                 console.log(res);
-                this.permData = res.data;
+                this.permData = res.data.list;
+                // for(var i of row.permList){
+                this.defaultChecked = res.data.ids
+                // }
+                // this.getList();
             } catch (error) {
                 console.log(error);
             }

@@ -15,3 +15,11 @@ export const deleteSubmit = (data) => {
         params: data
     })
 }
+
+export const checkSysCodeSubmit = (data) => {
+    return api.request({
+        url: `/api/system/checkSysCode`,
+        method: 'get',
+        params: data
+    })
+}

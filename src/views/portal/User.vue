@@ -23,7 +23,7 @@
             <el-table-column prop="userCode" label="用户编码" width="200"></el-table-column>
             <el-table-column prop="username" label="用户名称" width="180"></el-table-column>
             <el-table-column prop="mobile" label="手机号" width="180"></el-table-column>
-            <el-table-column prop="email" label="邮箱" width="200"></el-table-column>
+            <el-table-column prop="email" label="邮箱" width="300"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button
@@ -65,24 +65,23 @@
                 :total="page.totalSize"
             ></el-pagination>
         </p>
-        <el-dialog :title="titleName" :visible.sync="dialogFormVisible" width="30%">
+        <el-dialog :title="titleName" :visible.sync="dialogFormVisible" @opened="openDialog('dialogForm')" width="30%">
             <el-form :model="dialogForm" :rules="rules" ref="dialogForm" status-icon>
                 <el-input v-model="dialogForm.id" type="hidden"></el-input>
                 <el-form-item label="用户编码" :label-width="formLabelWidth" prop="userCode">
-                    <el-input v-model="dialogForm.userCode" autocomplete="off"></el-input>
+                    <el-input v-model="dialogForm.userCode" :disabled="disabled" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="用户名称" :label-width="formLabelWidth" prop="username">
-                    <el-input v-model="dialogForm.username" :disabled="disabled" autocomplete="off"></el-input>
+                    <el-input v-model="dialogForm.username" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="手机号" :label-width="formLabelWidth" prop="mobile">
                     <el-input
                         v-model.number="dialogForm.mobile"
-                        :disabled="disabled"
                         autocomplete="off"
                     ></el-input>
                 </el-form-item>
                 <el-form-item label="邮箱" :label-width="formLabelWidth" prop="email">
-                    <el-input v-model="dialogForm.email" :disabled="disabled" autocomplete="off"></el-input>
+                    <el-input v-model="dialogForm.email" autocomplete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -102,11 +101,26 @@
                 <el-button type="primary" @click="handleRoleDialogSubmit()">保存</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="权限配置" :visible.sync="dialogPermFormVisible">
+            <el-tree
+                :data="permData"
+                show-checkbox
+                default-expand-all
+                node-key="id"
+                :default-checked-keys="defaultChecked"
+                ref="tree"
+                highlight-current
+            ></el-tree>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogPermFormVisible = false">取 消</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
 import * as User from "@/api/components/portal/user.js";
 import * as Role from "@/api/components/portal/role.js";
+import * as Perm from "@/api/components/portal/perm.js";
 import Qs from 'qs'
 import axios from 'axios'
 export default {
@@ -121,6 +135,18 @@ export default {
                 }
                 callback();
             }
+        };
+        var checkUserCode = (rule, value, callback) => {
+            User.checkUserCodeSubmit({
+                userCode: value,
+                id: this.dialogForm.id
+            }).then(function(res){
+                if(res.data){
+                    callback()
+                }else{
+                    callback(new Error("用户编码重复，请重新输入"))
+                }
+            })
         };
         return {
             page: {
@@ -146,6 +172,10 @@ export default {
                         max: 20,
                         message: "长度在5-20字符",
                         trigger: "blur"
+                    },
+                    {
+                        validator: checkUserCode,
+                        trigger: ["blur", "change"]
                     }
                 ],
                 username: [
@@ -191,7 +221,10 @@ export default {
             formLabelWidth: "100px",
             titleName: "创建用户",
             buttonName: "创建",
-            disabled: false
+            disabled: false,
+            dialogPermFormVisible: false,
+            permData: [],
+            defaultChecked: []
         };
     },
     methods: {
@@ -209,6 +242,9 @@ export default {
         onSubmit() {
             this.getList();
         },
+        openDialog(form){
+            this.$refs[form].clearValidate()
+        },
         async handleRoleDialogSubmit() {
             try {
                 await axios
@@ -222,6 +258,7 @@ export default {
                             type: "success"
                         });
                     }
+                    this.roleFormVisible = false
                 })
             } catch (error) {
                 console.log(error);
@@ -250,7 +287,7 @@ export default {
             this.dialogForm.username = row.username;
             this.dialogForm.mobile = row.mobile;
             this.dialogForm.email = row.email;
-            this.disabled = false;
+            this.disabled = true;
         },
         async handleRole(row) {
             this.userCode = row.userCode;
@@ -267,6 +304,16 @@ export default {
         },
         async handlePerm(row) {
             console.log(row);
+            this.dialogPermFormVisible = true;
+            try {
+                const res = await Perm.getPermDataByUserCodeSubmit({
+                    userCode: row.userCode
+                });
+                this.permData = res.data.list;
+                this.defaultChecked = res.data.ids
+            } catch (error) {
+                console.log(error);
+            }
         },
         async handleDialogSubmit(dialogForm) {
             await this.$refs[dialogForm].validate(valid => {

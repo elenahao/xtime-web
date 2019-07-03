@@ -40,3 +40,10 @@ export const saveUserRole = (data) => {
     })
 }
 
+export const checkRoleCodeSubmit = (data) => {
+    return api.request({
+        url: `/api/role/checkRoleCode`,
+        method: 'get',
+        params: data
+    })
+}

@@ -51,7 +51,7 @@
                 :total="page.totalSize"
             ></el-pagination>
         </p>
-        <el-dialog :title="titleName" :visible.sync="dialogFormVisible" width="30%">
+        <el-dialog :title="titleName" :visible.sync="dialogFormVisible" @opened="openDialog('dialogForm')" width="30%">
             <el-form :model="dialogForm" :rules="rules" ref="dialogForm" status-icon>
                 <el-input v-model="dialogForm.id" type="hidden"></el-input>
                 <el-form-item label="角色编码" :label-width="formLabelWidth" prop="roleCode">
@@ -91,6 +91,18 @@ import axios from "axios";
 export default {
     name: "user",
     data() {
+        var checkRoleCode = (rule, value, callback) => {
+            Role.checkRoleCodeSubmit({
+                roleCode: value,
+                id: this.dialogForm.id
+            }).then(function(res){
+                if(res.data){
+                    callback()
+                }else{
+                    callback(new Error("角色编码重复，请重新输入"))
+                }
+            })
+        };
         return {
             permData: [],
             page: {
@@ -114,6 +126,10 @@ export default {
                         max: 20,
                         message: "长度在2-20字符",
                         trigger: "blur"
+                    },
+                    {
+                        validator: checkRoleCode,
+                        trigger: ['change', 'blur']
                     }
                 ],
                 roleName: [
@@ -154,6 +170,9 @@ export default {
         },
         onSubmit() {
             this.getList();
+        },
+        openDialog(form){
+            this.$refs[form].clearValidate()
         },
         async handlePermDialogSubmit() {
             let checkedNodes = this.$refs.tree.getCheckedNodes();
@@ -214,12 +233,8 @@ export default {
                 const res = await Perm.getPermDataSubmit({
                     roleCode: this.roleCode
                 });
-                console.log(res);
                 this.permData = res.data.list;
-                // for(var i of row.permList){
                 this.defaultChecked = res.data.ids
-                // }
-                // this.getList();
             } catch (error) {
                 console.log(error);
             }

@@ -23,3 +23,11 @@ export const listSubmit = (data) => {
         params: data
     })
 }
+
+export const checkUserCodeSubmit = (data) => {
+    return api.request({
+        url: `/api/user/checkUserCode`,
+        method: 'get',
+        params: data
+    })
+}

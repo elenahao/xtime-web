@@ -40,15 +40,15 @@
       :total="page.totalSize">
     </el-pagination>
     </p>
-    <el-dialog :title="titleName" :visible.sync="dialogFormVisible" width="30%">
-      <el-form :model="form">
+    <el-dialog :title="titleName" :visible.sync="dialogFormVisible" @opened="openDialog('dialogForm')" width="30%">
+      <el-form :model="dialogForm" ref="dialogForm" :rules="rules" status-icon>
         <el-input v-model="dialogForm.id" type="hidden"></el-input>
-        <el-form-item label="系统名称" :label-width="formLabelWidth">
-          <el-input v-model="dialogForm.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="系统编码" :label-width="formLabelWidth">
+        <el-form-item label="系统编码" :label-width="formLabelWidth" prop="code">
            <el-input v-model="dialogForm.code" :disabled="disabled" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="系统名称" :label-width="formLabelWidth" prop="name">
+          <el-input v-model="dialogForm.name" autocomplete="off"></el-input>
+        </el-form-item> 
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -63,7 +63,45 @@ import axios from 'axios'
 export default {
     name: "system",
     data() {
+      var checkSysCode = (rule, value, callback) => {
+            System.checkSysCodeSubmit({
+                sysCode: value,
+                id: this.dialogForm.id
+            }).then(function(res){
+                if(res.data){
+                    callback()
+                }else{
+                    callback(new Error("系统编码重复，请重新输入"))
+                }
+            })
+        };
         return {
+          rules: {
+                code: [
+                    {
+                        required: true,
+                        message: "请输入系统编码",
+                        trigger: "blur"
+                    },
+                    {
+                        min: 2,
+                        max: 20,
+                        message: "长度在2-20字符",
+                        trigger: "blur"
+                    },
+                    {
+                        validator: checkSysCode,
+                        trigger: ['change', 'blur']
+                    }
+                ],
+                name: [
+                    {
+                        required: true,
+                        message: "请输入系统名称",
+                        trigger: "blur"
+                    }
+                ]
+            },
             page: {
               currentPage : 1,
               pageSize : 5,
@@ -101,6 +139,9 @@ export default {
         },
         onSubmit() {
             this.getList()
+        },
+        openDialog(form){
+            this.$refs[form].clearValidate()
         },
         async handleDelete(row){
             try{

@@ -31,3 +31,19 @@ export const getPermMenuDataSubmit = (data) => {
         params: data
     })
 }
+
+export const checkMenuCodeSubmit = (data) => {
+    return api.request({
+        url: `/api/menu/checkMenuCode`,
+        method: 'get',
+        params: data
+    })
+}
+
+export const checkMenuRankSubmit = (data) => {
+    return api.request({
+        url: `/api/menu/checkMenuRank`,
+        method: 'get',
+        params: data
+    })
+}

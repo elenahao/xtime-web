@@ -54,14 +54,14 @@
                 :total="page.totalSize"
             ></el-pagination>
         </p>
-        <el-dialog :title="titleName" :visible.sync="dialogFormVisible" width="30%">
-            <el-form :model="form">
+        <el-dialog :title="titleName" :visible.sync="dialogFormVisible" @opened="openDialog('dialogForm')" width="30%">
+            <el-form :model="dialogForm" ref="dialogForm" :rules="rules" status-icon>
                 <el-input v-model="dialogForm.id" type="hidden"></el-input>
-                <el-form-item label="权限名称" :label-width="formLabelWidth">
-                    <el-input v-model="dialogForm.name" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="权限编码" :label-width="formLabelWidth">
+                <el-form-item label="权限编码" :label-width="formLabelWidth" prop="code">
                     <el-input v-model="dialogForm.code" :disabled="disabled" autocomplete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="权限名称" :label-width="formLabelWidth" prop="name">
+                    <el-input v-model="dialogForm.name" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="所属菜单" :label-width="formLabelWidth">
                     <el-cascader
@@ -80,7 +80,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="handleDialogSubmit">{{buttonName}}</el-button>
+                <el-button type="primary" @click="handleDialogSubmit('dialogForm')">{{buttonName}}</el-button>
             </div>
         </el-dialog>
     </div>
@@ -90,7 +90,45 @@ import * as Perm from "@/api/components/portal/perm.js";
 import * as Menu from "@/api/components/portal/menu.js";
 export default {
     data() {
+      var checkPermCode = (rule, value, callback) => {
+            Perm.checkPermCodeSubmit({
+                permCode: value,
+                id: this.dialogForm.id
+            }).then(function(res){
+                if(res.data){
+                    callback()
+                }else{
+                    callback(new Error("权限编码重复，请重新输入"))
+                }
+            })
+        };
         return {
+          rules: {
+                code: [
+                    {
+                        required: true,
+                        message: "请输入权限编码",
+                        trigger: "blur"
+                    },
+                    {
+                        min: 10,
+                        max: 100,
+                        message: "长度在10-100字符",
+                        trigger: "blur"
+                    },
+                    {
+                        validator: checkPermCode,
+                        trigger: ['change', 'blur']
+                    }
+                ],
+                name: [
+                    {
+                        required: true,
+                        message: "请输入权限名称",
+                        trigger: "blur"
+                    }
+                ]
+            },
             dialogValue: [],
             value: [],
             menuData: [],
@@ -146,6 +184,9 @@ export default {
         onSubmit() {
             this.getList();
         },
+        openDialog(form){
+            this.$refs[form].clearValidate()
+        },
         handleChange(value) {
             console.log(value);
         },
@@ -195,38 +236,45 @@ export default {
             this.dialogValue = [];
             this.ifMenu = false;
         },
-        async handleDialogSubmit() {
-            this.dialogFormVisible = false;
-            this.dialogForm.sysCode = this.dialogValue[0];
-            this.dialogForm.menuCode = this.dialogValue[
-                this.dialogValue.length - 1
-            ];
-            var ifMenuParam = "";
-            if (this.ifMenu) {
-                ifMenuParam = 1;
-            } else {
-                ifMenuParam = 2;
-            }
-            try {
-                const res = await Perm.dialogSubmit({
-                    id: this.dialogForm.id,
-                    code: this.dialogForm.code,
-                    name: this.dialogForm.name,
-                    ifMenu: ifMenuParam,
-                    menuCode: this.dialogForm.menuCode,
-                    sysCode: this.dialogForm.sysCode,
-                    menuItems: this.dialogValue.join(",")
-                });
-                if (res.data != 0) {
-                    this.$message({
-                        message: "恭喜您，" + this.buttonName + "成功",
-                        type: "success"
-                    });
+        async handleDialogSubmit(dialogForm) {
+          await this.$refs[dialogForm].validate(valid => {
+            if (valid) {
+                this.dialogFormVisible = false;
+                this.dialogForm.sysCode = this.dialogValue[0];
+                this.dialogForm.menuCode = this.dialogValue[
+                    this.dialogValue.length - 1
+                ];
+                var ifMenuParam = "";
+                if (this.ifMenu) {
+                    ifMenuParam = 1;
+                } else {
+                    ifMenuParam = 2;
                 }
-                this.getList();
-            } catch (error) {
-                console.log(error);
-            }
+                try {
+                    const res = Perm.dialogSubmit({
+                        id: this.dialogForm.id,
+                        code: this.dialogForm.code,
+                        name: this.dialogForm.name,
+                        ifMenu: ifMenuParam,
+                        menuCode: this.dialogForm.menuCode,
+                        sysCode: this.dialogForm.sysCode,
+                        menuItems: this.dialogValue.join(",")
+                    });
+                    if (res.data != 0) {
+                        this.$message({
+                            message: "恭喜您，" + this.buttonName + "成功",
+                            type: "success"
+                        });
+                    }
+                    this.getList();
+                } catch (error) {
+                    console.log(error);
+                }
+                } else {
+                    console.log("error submit!!");
+                    return false;
+                }
+            });
         },
         async getList() {
             if (this.value.length != 0) {

@@ -39,3 +39,19 @@ export const getPermInfoSubmit = (data) => {
         params: data
     })
 }
+
+export const getPermDataByUserCodeSubmit = (data) => {
+    return api.request({
+        url: `/api/perm/getPermTreeByUserCode`,
+        method: 'get',
+        params: data
+    })
+}
+
+export const checkPermCodeSubmit = (data) => {
+    return api.request({
+        url: `/api/perm/checkPermCode`,
+        method: 'get',
+        params: data
+    })
+}

@@ -21,28 +21,29 @@
                 </span>
             </el-tree>
         </div>
-        <el-dialog :title="titleName" :visible.sync="dialogFormVisible" width="30%">
-            <el-form :model="dialogForm">
+        <el-dialog :title="titleName" :visible.sync="dialogFormVisible" @opened="openDialog('dialogForm')" width="30%">
+            <el-form :model="dialogForm" ref="dialogForm" :rules="rules" status-icon>
                 <el-input v-model="dialogForm.id" type="hidden"></el-input>
-                <el-form-item label="菜单编码" :label-width="formLabelWidth">
+                <el-form-item label="菜单编码" :label-width="formLabelWidth" prop="menuCode">
                     <el-input v-model="dialogForm.menuCode" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="菜单名称" :label-width="formLabelWidth">
+                <el-form-item label="菜单名称" :label-width="formLabelWidth" prop="menuName">
                     <el-input v-model="dialogForm.menuName" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="父级菜单" :label-width="formLabelWidth">
                     <el-cascader
                         v-model="value"
                         :options="menuData"
+                        style="width: 100%"
                         :props="{ expandTrigger: 'hover', checkStrictly: true }"
                         @change="handleChange"
                         clearable
                     ></el-cascader>
                 </el-form-item>
-                <el-form-item label="菜单URL" :label-width="formLabelWidth">
+                <!-- <el-form-item label="菜单URL" :label-width="formLabelWidth">
                     <el-input v-model="dialogForm.menuUrl" autocomplete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="排序码" :label-width="formLabelWidth">
+                </el-form-item> -->
+                <el-form-item label="排序码" :label-width="formLabelWidth" prop="rank">
                     <el-input v-model="dialogForm.rank" autocomplete="off"></el-input>
                 </el-form-item>
             </el-form>
@@ -57,7 +58,72 @@
 import * as Menu from "@/api/components/portal/menu.js";
 export default {
     data() {
+        var checkMenuCode = (rule, value, callback) => {
+            Menu.checkMenuCodeSubmit({
+                menuCode: value,
+                sysCode: this.dialogForm.sysCode, 
+                id: this.dialogForm.id
+            }).then(function(res){
+                if(res.data){
+                    callback()
+                }else{
+                    callback(new Error("菜单编码重复，请重新输入"))
+                }
+            })
+        };
+        var checkMenuRank = (rule, value, callback) => {
+            Menu.checkMenuRankSubmit({
+                rank: value,
+                sysCode: this.dialogForm.sysCode, 
+                pMenuCode: this.dialogForm.pMenuCode,
+                menuCode: this.dialogForm.menuCode,
+                oldRank: this.dialogForm.rank
+            }).then(function(res){
+                if(res.data){
+                    callback()
+                }else{
+                    callback(new Error("菜单排序码重复，请重新输入"))
+                }
+            })
+        };
         return {
+            rules: {
+                menuCode: [
+                    {
+                        required: true,
+                        message: "请输入菜单编码",
+                        trigger: "blur"
+                    },
+                    {
+                        min: 10,
+                        max: 100,
+                        message: "长度在10-100字符",
+                        trigger: "blur"
+                    },
+                    {
+                        validator: checkMenuCode,
+                        trigger: ['change', 'blur']
+                    }
+                ],
+                menuName: [
+                    {
+                        required: true,
+                        message: "请输入菜单名称",
+                        trigger: "blur"
+                    }
+                ],
+                rank: [
+                    {
+                        required: true,
+                        message: "请输入菜单排序码",
+                        trigger: "blur"
+                    },
+                    {
+                        validator: checkMenuRank,
+                        trigger: ['change', 'blur']
+                    }
+                ]
+            },
             value: [],
             menuData: [],
             dialogForm: {
@@ -65,7 +131,7 @@ export default {
                 menuCode: "",
                 menuName: "",
                 pMenuCode: "",
-                menuUrl: "",
+                // menuUrl: "",
                 rank: "",
                 sysCode: "",
                 level: ""
@@ -103,7 +169,7 @@ export default {
                     code: this.dialogForm.menuCode,
                     name: this.dialogForm.menuName,
                     pCode: this.dialogForm.pMenuCode,
-                    menuUrl: this.dialogForm.menuUrl,
+                    // menuUrl: this.dialogForm.menuUrl,
                     rank: this.dialogForm.rank,
                     sysCode: this.dialogForm.sysCode,
                     level: this.dialogForm.level

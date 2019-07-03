@@ -105,7 +105,6 @@
             <el-tree
                 :data="permData"
                 show-checkbox
-                default-expand-all
                 node-key="id"
                 :default-checked-keys="defaultChecked"
                 ref="tree"

@@ -1,19 +1,29 @@
 <template>
     <div>
-        <el-button class="btn-creat" type="success" icon="el-icon-plus" @click="handleCreate">创建</el-button>
+        <el-button
+            class="btn-creat"
+            type="success"
+            icon="el-icon-plus"
+            round
+            size="small"
+            @click="handleCreate"
+        >创建</el-button>
         <div class="el-tree-default">
-            <el-tree
-                :data="menuData"
-                node-key="id"
-                default-expand-all
-                :expand-on-click-node="false"
-            >
+            <el-tree :data="menuData" node-key="id" accordion :expand-on-click-node="false">
                 <span class="custom-tree-node" slot-scope="{ node, data }">
                     <span>{{ node.label }}</span>
                     <span>
-                        <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="() => edit(data)"></el-button>
                         <el-button
-                            type="danger" icon="el-icon-delete" circle
+                            type="primary"
+                            icon="el-icon-edit"
+                            round
+                            size="mini"
+                            @click="() => handleUpdate(data)"
+                        ></el-button>
+                        <el-button
+                            type="danger"
+                            icon="el-icon-delete"
+                            round
                             size="mini"
                             @click="() => remove(node, data)"
                         ></el-button>
@@ -21,7 +31,12 @@
                 </span>
             </el-tree>
         </div>
-        <el-dialog :title="titleName" :visible.sync="dialogFormVisible" @opened="openDialog('dialogForm')" width="30%">
+        <el-dialog
+            :title="titleName"
+            :visible.sync="dialogFormVisible"
+            @opened="openDialog('dialogForm')"
+            width="30%"
+        >
             <el-form :model="dialogForm" ref="dialogForm" :rules="rules" status-icon>
                 <el-input v-model="dialogForm.id" type="hidden"></el-input>
                 <el-form-item label="菜单编码" :label-width="formLabelWidth" prop="menuCode">
@@ -40,11 +55,8 @@
                         clearable
                     ></el-cascader>
                 </el-form-item>
-                <!-- <el-form-item label="菜单URL" :label-width="formLabelWidth">
-                    <el-input v-model="dialogForm.menuUrl" autocomplete="off"></el-input>
-                </el-form-item> -->
                 <el-form-item label="排序码" :label-width="formLabelWidth" prop="rank">
-                    <el-input v-model="dialogForm.rank" autocomplete="off"></el-input>
+                    <el-input v-model.number="dialogForm.rank" autocomplete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -59,32 +71,49 @@ import * as Menu from "@/api/components/portal/menu.js";
 export default {
     data() {
         var checkMenuCode = (rule, value, callback) => {
+            const sysCode = this.value[0];
+            const id = this.dialogForm.id;
+            if (id > 0) {
+                return callback();
+            }
+            if (
+                sysCode === "" ||
+                sysCode === undefined ||
+                value === "" ||
+                value === undefined
+            ) {
+                return callback();
+            }
             Menu.checkMenuCodeSubmit({
                 menuCode: value,
-                sysCode: this.dialogForm.sysCode, 
+                sysCode: sysCode,
                 id: this.dialogForm.id
-            }).then(function(res){
-                if(res.data){
-                    callback()
-                }else{
-                    callback(new Error("菜单编码重复，请重新输入"))
+            }).then(function(res) {
+                if (res.data) {
+                    callback();
+                } else {
+                    callback(new Error("菜单编码重复，请重新输入"));
                 }
-            })
+            });
         };
         var checkMenuRank = (rule, value, callback) => {
+            const oldRank = this.existRank;
+            console.log("oldRank"+oldRank);
+            console.log("newRank"+value);
+            if (value === oldRank) {
+                return callback();
+            }
             Menu.checkMenuRankSubmit({
                 rank: value,
-                sysCode: this.dialogForm.sysCode, 
-                pMenuCode: this.dialogForm.pMenuCode,
-                menuCode: this.dialogForm.menuCode,
-                oldRank: this.dialogForm.rank
-            }).then(function(res){
-                if(res.data){
-                    callback()
-                }else{
-                    callback(new Error("菜单排序码重复，请重新输入"))
+                sysCode: this.dialogForm.sysCode,
+                pMenuCode: this.dialogForm.pMenuCode
+            }).then(function(res) {
+                if (res.data) {
+                    callback();
+                } else {
+                    callback(new Error("菜单排序码重复，请重新输入"));
                 }
-            })
+            });
         };
         return {
             rules: {
@@ -95,14 +124,14 @@ export default {
                         trigger: "blur"
                     },
                     {
-                        min: 10,
-                        max: 100,
-                        message: "长度在10-100字符",
+                        min: 2,
+                        max: 30,
+                        message: "长度在2-30字符",
                         trigger: "blur"
                     },
                     {
                         validator: checkMenuCode,
-                        trigger: ['change', 'blur']
+                        trigger: ["change", "blur"]
                     }
                 ],
                 menuName: [
@@ -120,7 +149,7 @@ export default {
                     },
                     {
                         validator: checkMenuRank,
-                        trigger: ['change', 'blur']
+                        trigger: ["change", "blur"]
                     }
                 ]
             },
@@ -131,7 +160,6 @@ export default {
                 menuCode: "",
                 menuName: "",
                 pMenuCode: "",
-                // menuUrl: "",
                 rank: "",
                 sysCode: "",
                 level: ""
@@ -139,7 +167,8 @@ export default {
             dialogFormVisible: false,
             formLabelWidth: "100px",
             titleName: "创建菜单",
-            buttonName: "创建"
+            buttonName: "创建",
+            existRank: ''
         };
     },
     methods: {
@@ -158,32 +187,44 @@ export default {
         handleChange(value) {
             console.log(value);
         },
-        async handleDialogSubmit() {
-            this.dialogFormVisible = false;
-            this.dialogForm.sysCode = this.value[0];
-            this.dialogForm.level = this.value.length;
-            this.dialogForm.pMenuCode = this.value[this.value.length - 1];
-            try {
-                const res = await Menu.dialogSubmit({
-                    id: this.dialogForm.id,
-                    code: this.dialogForm.menuCode,
-                    name: this.dialogForm.menuName,
-                    pCode: this.dialogForm.pMenuCode,
-                    // menuUrl: this.dialogForm.menuUrl,
-                    rank: this.dialogForm.rank,
-                    sysCode: this.dialogForm.sysCode,
-                    level: this.dialogForm.level
-                });
-                if (res.data != 0) {
-                    this.$message({
-                        message: "恭喜您，" + this.buttonName + "成功",
-                        type: "success"
-                    });
+        openDialog(form) {
+            this.$refs[form].clearValidate();
+        },
+        async handleDialogSubmit(dialogForm) {
+            await this.$refs[dialogForm].validate(valid => {
+                if (valid) {
+                    this.dialogFormVisible = false;
+                    this.dialogForm.sysCode = this.value[0];
+                    this.dialogForm.level = this.value.length;
+                    this.dialogForm.pMenuCode = this.value[
+                        this.value.length - 1
+                    ];
+                    try {
+                        const res = Menu.dialogSubmit({
+                            id: this.dialogForm.id,
+                            code: this.dialogForm.menuCode,
+                            name: this.dialogForm.menuName,
+                            pCode: this.dialogForm.pMenuCode,
+                            // menuUrl: this.dialogForm.menuUrl,
+                            rank: this.dialogForm.rank,
+                            sysCode: this.dialogForm.sysCode,
+                            level: this.dialogForm.level
+                        });
+                        if (res.data != 0) {
+                            this.$message({
+                                message: "恭喜您，" + this.buttonName + "成功",
+                                type: "success"
+                            });
+                        }
+                        this.getMenuData();
+                    } catch (error) {
+                        console.log(error);
+                    }
+                } else {
+                    console.log("error submit!!");
+                    return false;
                 }
-                this.getMenuData();
-            } catch (error) {
-                console.log(error);
-            }
+            });
         },
         handleCreate() {
             this.dialogFormVisible = true;
@@ -192,13 +233,10 @@ export default {
             this.dialogForm.id = 0;
             this.dialogForm.userCode = "";
             this.dialogForm.username = "";
+            this.existRank = ""
         },
-        edit(data) {
-            // const newChild = { id: id++, label: 'testtest', children: [] };
-            // if (!data.children) {
-            //   this.$set(data, 'children', []);
-            // }
-            // data.children.push(newChild);
+        handleUpdate(data) {
+            // this.existRank = data.rank data中没有rank 需要从后台获取数据
             console.log(data);
         },
 
@@ -218,17 +256,19 @@ export default {
 .btn-creat {
     margin-bottom: 20px;
 }
-.el-tree-default{
-  width: 400px;
+.el-tree-default {
+    width: 400px;
 }
 </style>
 <style>
 .custom-tree-node {
     flex: 1;
     display: flex;
-    align-items: auto;
+    align-items: center;
     justify-content: space-between;
-    /* font-size: 14px; */
-    /* padding-left: 10px; */
+    margin: 5px;
+}
+.el-tree-node__content {
+    height: auto;
 }
 </style>

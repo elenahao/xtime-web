@@ -25,7 +25,7 @@
                             icon="el-icon-delete"
                             round
                             size="mini"
-                            @click="() => remove(node, data)"
+                            @click="() => handleRemove(node, data)"
                         ></el-button>
                     </span>
                 </span>
@@ -98,8 +98,6 @@ export default {
         };
         var checkMenuRank = (rule, value, callback) => {
             const oldRank = this.existRank;
-            console.log("oldRank"+oldRank);
-            console.log("newRank"+value);
             if (value === oldRank) {
                 return callback();
             }
@@ -237,14 +235,15 @@ export default {
         },
         handleUpdate(data) {
             // this.existRank = data.rank data中没有rank 需要从后台获取数据
+
             console.log(data);
         },
-
-        remove(node, data) {
+        handleRemove(node, data) {
             const parent = node.parent;
             const children = parent.data.children || parent.data;
             const index = children.findIndex(d => d.id === data.id);
             children.splice(index, 1);
+            //如果节点下有子菜单，则不允许删除
         }
     },
     created() {

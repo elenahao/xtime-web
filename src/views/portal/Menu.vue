@@ -40,7 +40,7 @@
             <el-form :model="dialogForm" ref="dialogForm" :rules="rules" status-icon>
                 <el-input v-model="dialogForm.id" type="hidden"></el-input>
                 <el-form-item label="菜单编码" :label-width="formLabelWidth" prop="menuCode">
-                    <el-input v-model="dialogForm.menuCode" autocomplete="off"></el-input>
+                    <el-input v-model="dialogForm.menuCode" :disabled="disabled" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="菜单名称" :label-width="formLabelWidth" prop="menuName">
                     <el-input v-model="dialogForm.menuName" autocomplete="off"></el-input>
@@ -52,6 +52,7 @@
                         style="width: 100%"
                         :props="{ expandTrigger: 'hover', checkStrictly: true }"
                         @change="handleChange"
+                        :disabled="disabled"
                         clearable
                     ></el-cascader>
                 </el-form-item>
@@ -166,7 +167,8 @@ export default {
             formLabelWidth: "100px",
             titleName: "创建菜单",
             buttonName: "创建",
-            existRank: ''
+            existRank: "",
+            disabled: false
         };
     },
     methods: {
@@ -203,7 +205,6 @@ export default {
                             code: this.dialogForm.menuCode,
                             name: this.dialogForm.menuName,
                             pCode: this.dialogForm.pMenuCode,
-                            // menuUrl: this.dialogForm.menuUrl,
                             rank: this.dialogForm.rank,
                             sysCode: this.dialogForm.sysCode,
                             level: this.dialogForm.level
@@ -229,20 +230,40 @@ export default {
             this.titleName = "创建菜单";
             this.buttonName = "创建";
             this.dialogForm.id = 0;
-            this.dialogForm.userCode = "";
-            this.dialogForm.username = "";
-            this.existRank = ""
+            this.dialogForm.menuCode = "";
+            this.dialogForm.menuName = "";
+            this.existRank = "";
+            this.disabled = false;
         },
-        handleUpdate(data) {
-            // this.existRank = data.rank data中没有rank 需要从后台获取数据
-
-            console.log(data);
+        handleUpdate(row) {
+            console.log(row);
+            if (row.root) {
+                //根节点不允许编辑
+                this.$message.error("系统信息不得在此页面修改");
+                return;
+            }
+            this.dialogForm.id = row.id;
+            this.dialogForm.menuCode = row.value;
+            this.dialogForm.menuName = row.label;
+            this.dialogForm.rank = row.rank;
+            this.existRank = row.rank;
+            this.value = row.menuItems.split(",");
+            this.disabled = true;
+            this.dialogFormVisible = true;
+            this.titleName = "修改菜单";
+            this.buttonName = "保存";
         },
         handleRemove(node, data) {
-            const parent = node.parent;
-            const children = parent.data.children || parent.data;
-            const index = children.findIndex(d => d.id === data.id);
-            children.splice(index, 1);
+            console.log(node);
+            console.log(data);
+            if(data.children != null && data.children.length !== 0){
+                this.$message.error("菜单含有子节点，不得删除")
+                return
+            }
+            // const parent = node.parent;
+            // const children = parent.data.children || parent.data;
+            // const index = children.findIndex(d => d.id === data.id);
+            // children.splice(index, 1);
             //如果节点下有子菜单，则不允许删除
         }
     },

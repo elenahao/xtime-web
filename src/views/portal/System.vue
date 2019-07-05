@@ -14,8 +14,8 @@
     <el-button class="btn-creat" type="success" icon="el-icon-plus" @click="dialogFormVisible = true">创建</el-button>
     <el-table :data="tableData" stripe border>
       <el-table-column prop="id" label="ID" width="100"></el-table-column>
-      <el-table-column prop="sysName" label="系统名称" width="200"></el-table-column>
-      <el-table-column prop="sysCode" label="系统编码" width="180"></el-table-column>
+      <el-table-column prop="sysName" label="系统名称" width="300"></el-table-column>
+      <el-table-column prop="sysCode" label="系统编码" width="300"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
@@ -24,7 +24,7 @@
             size="medium"
             icon="el-icon-edit"
           >编辑</el-button>
-          <el-button type="danger" size="medium" icon="el-icon-delete" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button type="danger" size="medium" icon="el-icon-delete" disabled="disabled" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

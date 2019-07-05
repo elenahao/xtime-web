@@ -47,3 +47,12 @@ export const checkRoleCodeSubmit = (data) => {
         params: data
     })
 }
+
+export const judgeDeleteSubmit = (data) => {
+    return api.request({
+        url: `/api/role/judgeDelete`,
+        method: 'post',
+        params: data
+    })
+}
+

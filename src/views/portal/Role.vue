@@ -14,8 +14,8 @@
         <el-button class="btn-creat" type="success" icon="el-icon-plus" @click="handleCreate">创建</el-button>
         <el-table :data="tableData" stripe border>
             <el-table-column prop="id" label="ID" width="100"></el-table-column>
-            <el-table-column prop="roleCode" label="角色编码" width="200"></el-table-column>
-            <el-table-column prop="roleName" label="角色名称" width="180"></el-table-column>
+            <el-table-column prop="roleCode" label="角色编码" width="220"></el-table-column>
+            <el-table-column prop="roleName" label="角色名称" width="280"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-button
@@ -182,6 +182,10 @@ export default {
                     permCodes.push(node.value);
                 }
             }
+            if(permCodes.length === 0){
+                permCodes = null
+            }
+            console.log(permCodes)
             try {
                 await axios
                     .get(
@@ -215,6 +219,31 @@ export default {
         },
         async handleDelete(row) {
             console.log(row);
+            //先判断是否可以删除角色
+            try {
+                const result = await Role.judgeDeleteSubmit({
+                    roleCode: row.roleCode
+                })
+                console.log(result)
+                if(result.data == false){
+                    this.$message.error("请先清除角色与权限/用户的绑定关系，再删除此角色")
+                    return
+                }
+                const res = await Role.deleteSubmit({
+                    id: row.id
+                });
+                if (res.data != 0) {
+                    this.$message({
+                        message: "恭喜您，删除成功",
+                        type: "success"
+                    });
+                }
+                this.page.currentPage = 1;
+                this.getList();
+            } catch (error) {
+                console.log(error);
+            }
+
         },
         async handleUpdate(row) {
             this.dialogFormVisible = true;

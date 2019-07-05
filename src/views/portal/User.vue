@@ -245,10 +245,14 @@ export default {
             this.$refs[form].clearValidate()
         },
         async handleRoleDialogSubmit() {
+            let roleCodes = this.roleResult
+            if(roleCodes.length === 0){
+                roleCodes = null
+            }
             try {
                 await axios
                 .get(
-                    `/api/role/saveUserRole?userCode=${this.userCode}&`+Qs.stringify({roleCodes: this.roleResult}, {arrayFormat: 'repeat'})
+                    `/api/role/saveUserRole?userCode=${this.userCode}&`+Qs.stringify({roleCodes: roleCodes}, {arrayFormat: 'repeat'})
                 )
                 .then(res => {
                     if (res.data === true) {
@@ -276,6 +280,29 @@ export default {
         },
         async handleDelete(row) {
             console.log(row);
+            try {
+                const result = await User.judgeDeleteSubmit({
+                    userCode: row.userCode
+                })
+                console.log(result)
+                if(result.data == false){
+                    this.$message.error("请先清除用户与角色的绑定关系，再删除此用户")
+                    return
+                }
+                const res = await User.deleteSubmit({
+                    id: row.id
+                });
+                if (res.data != 0) {
+                    this.$message({
+                        message: "恭喜您，删除成功",
+                        type: "success"
+                    });
+                }
+                this.page.currentPage = 1;
+                this.getList();
+            } catch (error) {
+                console.log(error);
+            }
         },
         async handleUpdate(row) {
             this.dialogFormVisible = true;

@@ -41,12 +41,15 @@ export default {
             'changeSysCode',
             'changeMenuCode',
             'changeSysAndFirst',
-            'changeSidebarList'
+            'changeSidebarList',
+            'changeBreadcrumbList'
         ]),
         async getMenuData() {
             const res = await common.getMenuListData()
             this.menuList = res.data
-            const router = this.$router.history.current.path
+            const path = this.$router.history.current.path
+            const pathArr = path.slice(1).split('/')
+            const router = "/" + pathArr[0] + '/' + pathArr[1]
             for (const item of this.menuList) {
                 if (router === item.router) {
                     this.menuActive = item.index
@@ -65,6 +68,7 @@ export default {
                 this.changeSysCode(pathArr[0])
                 this.changeMenuCode(pathArr[1])
                 this.getSiderbarData(pathArr[0], pathArr[1])
+                this.changeBreadcrumbList('')
             }
         },
         getSiderbarData(systemCode, menuCode) {

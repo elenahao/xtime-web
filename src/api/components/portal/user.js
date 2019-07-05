@@ -31,3 +31,11 @@ export const checkUserCodeSubmit = (data) => {
         params: data
     })
 }
+
+export const judgeDeleteSubmit = (data) => {
+    return api.request({
+        url: `/api/user/judgeDelete`,
+        method: 'post',
+        params: data
+    })
+}

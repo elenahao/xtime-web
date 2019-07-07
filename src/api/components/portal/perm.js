@@ -55,3 +55,11 @@ export const checkPermCodeSubmit = (data) => {
         params: data
     })
 }
+
+export const judgeDeleteSubmit = (data) => {
+    return api.request({
+        url: `/api/perm/judgeDelete`,
+        method: 'post',
+        params: data
+    })
+}

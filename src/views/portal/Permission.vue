@@ -191,7 +191,16 @@ export default {
             console.log(value);
         },
         async handleDelete(row) {
+            //先判断是否可以删除权限
             try {
+                const result = await Perm.judgeDeleteSubmit({
+                    permCode: row.permCode
+                })
+                console.log(result)
+                if(result.data == false){
+                    this.$message.error("请先清除权限与角色的绑定关系，再删除此权限")
+                    return
+                }
                 const res = await Perm.deleteSubmit({
                     id: row.id
                 });

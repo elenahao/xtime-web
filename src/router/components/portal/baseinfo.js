@@ -1,23 +1,24 @@
 export default [{
-        path: "system/list",
+        // path: "system/list",
+        path: "system",
         name: "系统列表",
         component: () => import( /* webpackChunkName: "baseInfo" */ '@/views/portal/System'),
         meta: {
             title: "breadcrumb",
-            breadcrumb: [
-                {
-                    name: "平台系统",
-                },
-                {
-                    name: "基础信息",
-                },
-                {
-                    name: "系统管理",
-                },
-                {
-                    name: "系统列表",
-                }
-            ]
+            // breadcrumb: [
+            //     {
+            //         name: "平台系统",
+            //     },
+            //     {
+            //         name: "基础信息",
+            //     },
+            //     {
+            //         name: "系统管理",
+            //     },
+            //     {
+            //         name: "系统列表",
+            //     }
+            // ]
         }
     },
     {
@@ -25,16 +26,16 @@ export default [{
         component: () => import( /* webpackChunkName: "baseInfo" */ '@/views/portal/User'),
         meta: {
             title: "breadcrumb",
-            breadcrumb: [{
-                    name: "平台系统",
-                },
-                {
-                    name: "基础信息",
-                },
-                {
-                    name: "用户管理",
-                }
-            ]
+            // breadcrumb: [{
+            //         name: "平台系统",
+            //     },
+            //     {
+            //         name: "基础信息",
+            //     },
+            //     {
+            //         name: "用户管理",
+            //     }
+            // ]
         }
     },
     {
@@ -42,16 +43,16 @@ export default [{
         component: () => import( /* webpackChunkName: "baseInfo" */ '@/views/portal/Role'),
         meta: {
             title: "breadcrumb",
-            breadcrumb: [{
-                    name: "平台系统",
-                },
-                {
-                    name: "基础信息",
-                },
-                {
-                    name: "角色管理",
-                }
-            ]
+            // breadcrumb: [{
+            //         name: "平台系统",
+            //     },
+            //     {
+            //         name: "基础信息",
+            //     },
+            //     {
+            //         name: "角色管理",
+            //     }
+            // ]
         }
     },
     {
@@ -59,16 +60,16 @@ export default [{
         component: () => import( /* webpackChunkName: "baseInfo" */ '@/views/portal/Menu'),
         meta: {
             title: "breadcrumb",
-            breadcrumb: [{
-                    name: "平台系统",
-                },
-                {
-                    name: "基础信息",
-                },
-                {
-                    name: "菜单管理",
-                }
-            ]
+            // breadcrumb: [{
+            //         name: "平台系统",
+            //     },
+            //     {
+            //         name: "基础信息",
+            //     },
+            //     {
+            //         name: "菜单管理",
+            //     }
+            // ]
         }
     },
     {
@@ -76,16 +77,16 @@ export default [{
         component: () => import( /* webpackChunkName: "baseInfo" */ '@/views/portal/Permission'),
         meta: {
             title: "breadcrumb",
-            breadcrumb: [{
-                    name: "平台系统",
-                },
-                {
-                    name: "基础信息",
-                },
-                {
-                    name: "权限管理",
-                }
-            ]
+            // breadcrumb: [{
+            //         name: "平台系统",
+            //     },
+            //     {
+            //         name: "基础信息",
+            //     },
+            //     {
+            //         name: "权限管理",
+            //     }
+            // ]
         }
     }
 ]

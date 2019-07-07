@@ -12,7 +12,7 @@ export default {
         thirdMenuCode: '',
         sidebarList: '',
         breadcrumbList: '',
-        userCode:'',
+        userCode: localStorage.userCode,
         username: localStorage.username,
         userRoleCode:'',
         userRoleName:'',
@@ -21,6 +21,9 @@ export default {
     getters: {
         getSysAndFirst: state => {
             return `${state.systemCode}/${state.firstMenuCode}`
+        },
+        getUserCode: state => {
+            return `${state.userCode}`
         }
     },
     mutations: {
@@ -56,6 +59,7 @@ export default {
             state.isLogin = userInfo.isLogin
             localStorage.isLogin = userInfo.isLogin
             localStorage.username = userInfo.username
+            localStorage.userCode = userInfo.userCode
         }
     }
 }

@@ -47,3 +47,11 @@ export const checkMenuRankSubmit = (data) => {
         params: data
     })
 }
+
+export const judgeDeleteSubmit = (data) => {
+    return api.request({
+        url: `/api/menu/judgeDelete`,
+        method: 'post',
+        params: data
+    })
+}

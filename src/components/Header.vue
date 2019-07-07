@@ -11,20 +11,27 @@
             <el-dropdown v-if="this.isLogin">
                 <span class="el-dropdown-link">
                     <i class="el-icon-s-custom"></i>
-                    {{username}}    
+                    {{username}}
                 </span>
-                <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click="btnLogout">注销</el-dropdown-item>
+                <el-dropdown-menu slot="dropdown"
+                                  split-button="true">
+                    <el-dropdown-item @click.native="btnLogout">注销</el-dropdown-item>
                     <el-dropdown-item>修改密码</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
-            <el-button v-else type="text" class="btn-login"><router-link to="/login">登录</router-link></el-button>
+            <el-button v-else
+                       type="text"
+                       class="btn-login">
+                <router-link to="/login">登录</router-link>
+            </el-button>
         </div>
     </div>
 </template>
 <script>
 import Menu from './Menu'
-import { mapState} from 'vuex'
+import { mapState } from 'vuex'
+import Cookie from 'js-cookie'
+import router from '@/router.js'
 export default {
     name: 'Header',
     components: {
@@ -40,7 +47,12 @@ export default {
     },
     methods: {
         btnLogout() {
-            console.log(1111)
+            // 调用logout接口
+            localStorage.clear()
+            Cookie.set('access_token', '')
+            router.replace({
+                path: '/login'
+            })
         }
     }
 }
@@ -61,7 +73,7 @@ export default {
         font-weight: bolder;
         color: #fff;
     }
-    .header-menu{
+    .header-menu {
         position: absolute;
         left: 200px;
     }
@@ -74,7 +86,7 @@ export default {
         color: #fff;
         font-size: 16px;
     }
-    .btn-login{
+    .btn-login {
         color: #fff;
     }
 }

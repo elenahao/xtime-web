@@ -14,7 +14,7 @@
                     {{username}}    
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>注销</el-dropdown-item>
+                    <el-dropdown-item @click="btnLogout">注销</el-dropdown-item>
                     <el-dropdown-item>修改密码</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
@@ -36,6 +36,11 @@ export default {
     data() {
         return {
             // isLogin: this.isLogin
+        }
+    },
+    methods: {
+        btnLogout() {
+            console.log(1111)
         }
     }
 }

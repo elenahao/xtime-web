@@ -47,14 +47,14 @@ export default {
         }
     },
     computed: {
-        ...mapState('global', ['systemCode', 'menuCode', 'sidebarList', 'breadcrumbList'])
+        ...mapState('global', ['systemCode', 'menuCode', 'sidebarList', 'breadcrumbList', 'userCode'])
     },
     methods: {
         ...mapMutations('global', ['changeSidebarList', 'changeBreadcrumbList']),
         getSiderbarData(systemCode, menuCode) {
             axios
                 .get(
-                    `/api/menu/getSidebar?sysCode=${systemCode}&menuCode=${menuCode}`
+                    `/api/menu/getSidebar?sysCode=${systemCode}&menuCode=${menuCode}&userCode=${this.userCode}`
                 )
                 .then(res => {
                     this.changeSidebarList(res.data)

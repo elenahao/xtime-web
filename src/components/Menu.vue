@@ -21,7 +21,7 @@
     </el-menu>
 </template>
 <script>
-import { mapMutations } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import * as common from '@/api/common'
 import axios from 'axios'
 export default {
@@ -36,6 +36,9 @@ export default {
             menuActive: ''
         }
     },
+    computed: {
+        ...mapState('global', ['userCode'])
+    },
     methods: {
         ...mapMutations('global', [
             'changeSysCode',
@@ -45,7 +48,8 @@ export default {
             'changeBreadcrumbList'
         ]),
         async getMenuData() {
-            const res = await common.getMenuListData()
+            console.log(this.userCode);
+            const res = await common.getMenuListData({userCode: this.userCode})
             this.menuList = res.data
             const path = this.$router.history.current.path
             const pathArr = path.slice(1).split('/')

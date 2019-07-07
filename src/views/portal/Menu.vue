@@ -253,18 +253,44 @@ export default {
             this.titleName = "修改菜单";
             this.buttonName = "保存";
         },
-        handleRemove(node, data) {
-            console.log(node);
-            console.log(data);
-            if(data.children != null && data.children.length !== 0){
-                this.$message.error("菜单含有子节点，不得删除")
-                return
-            }
-            // const parent = node.parent;
-            // const children = parent.data.children || parent.data;
-            // const index = children.findIndex(d => d.id === data.id);
-            // children.splice(index, 1);
+        async handleRemove(node, data) {
+            console.log("data=" + data);
+            console.log("node=" + node);
             //如果节点下有子菜单，则不允许删除
+            if (data.children != null && data.children.length !== 0) {
+                this.$message.error("菜单含有子节点，不得删除");
+                return;
+            }
+            if (data.menuItems == null || data.menuItems == "") {
+                this.$message.error("菜单参数有误无法删除，请联系管理员");
+                return;
+            }
+            const menuItemsArray = data.menuItems.split(",");
+            try {
+                const result = await Menu.judgeDeleteSubmit({
+                    menuCode: data.value,
+                    sysCode: menuItemsArray[0]
+                });
+                console.log(result);
+                if (result.data == false) {
+                    this.$message.error(
+                        "请先清除菜单与权限的绑定关系，再删除此菜单"
+                    );
+                    return;
+                }
+                const res = await Menu.deleteSubmit({
+                    id: data.id
+                });
+                if (res.data != 0) {
+                    this.$message({
+                        message: "恭喜您，删除成功",
+                        type: "success"
+                    });
+                }
+                this.getMenuData();
+            } catch (error) {
+                console.log(error);
+            }
         }
     },
     created() {

@@ -23,7 +23,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex'
 import * as Common from '@/api/common'
-// import axios from 'axios'
+
 export default {
     watch: {
         $route() {

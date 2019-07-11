@@ -4,58 +4,60 @@
             <Header />
         </el-header>
         <el-container>
-            <el-aside width="200px" class="sidebar">
-                <Nav />
-            </el-aside>
-            <el-main>
-                <el-breadcrumb separator="/">
-                    <el-breadcrumb-item v-if="system">{{system}}</el-breadcrumb-item>
-                    <el-breadcrumb-item v-if="firstLevelMenu">{{firstLevelMenu}}</el-breadcrumb-item>
-                    <el-breadcrumb-item v-if="secondLevelMenu">{{secondLevelMenu}}</el-breadcrumb-item>
-                    <el-breadcrumb-item v-if="thirdLevelMenu">{{thirdLevelMenu}}</el-breadcrumb-item>
-                </el-breadcrumb>
-                <router-view class="view" ref=""></router-view>
-            </el-main>
+            <p v-if="welcomeShow"
+               class="wel"><i class="el-icon-s-home"></i>Welcome to xtime</p>
+            <el-container v-else>
+                <el-aside width="200px"
+                          class="sidebar">
+                    <Sidebar />
+                </el-aside>
+                <el-main>
+                    <Breadcrumb />
+                    <router-view></router-view>
+                </el-main>
+            </el-container>
         </el-container>
     </el-container>
 </template>
 
 <script>
 import Header from './Header.vue'
-import Nav from './Nav.vue'
-import { mapState, mapMutations } from "vuex"
+import Sidebar from './Sidebar'
+import Breadcrumb from './Breadcrumb'
 
 export default {
-    name: 'Home',
+    name: 'Main',
     components: {
         Header,
-        Nav
+        Sidebar,
+        Breadcrumb
     },
     computed: {
-        ...mapState('global', ['system', 'firstLevelMenu', 'secondLevelMenu', 'thirdLevelMenu'])
+        welcomeShow() {
+            return this.$route.path === '/' ? true : false
+        },
     },
     methods: {
-        ...mapMutations('global', ['changeSysAndFirst']),
-        changeMenu (system, first) {
-            //调后端接口拿到code对应的name
-            this.changeSysAndFirst({system: '核心系统', first: '会员管理', systemCode: system, firstMenuCode: first});
-        }
     },
     mounted() {
-        console.log("mounted===="+this.$route.path);
-        //将路径转为systemCode 和 firstMenuCode
-        this.changeMenu('cmc', 'member');
     }
 }
 </script>
 <style lang="scss" scoped>
-.el-header{
+.el-header {
     padding: 0;
 }
-.sidebar{
-    background-color: rgb(84, 92, 100);
+.sidebar {
+    background-color: #EFF2F7;
     margin-bottom: -10000px;
     padding-bottom: 10000px;
+}
+.wel {
+    text-align: center;
+    font-size: 50px;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 100px;
 }
 </style>
 
